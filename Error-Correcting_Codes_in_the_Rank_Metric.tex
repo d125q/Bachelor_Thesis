@@ -1,0 +1,2487 @@
+\documentclass[version=last, paper=A4, parskip=half, oneside,%
+toc=bibliography, toc=listof, listof=leveldown]{scrbook}
+
+% Fonts
+\usepackage{fontspec}
+
+% Languages
+\usepackage[english]{babel}
+
+% Microtype
+\usepackage[babel, final]{microtype}
+
+% Ragged text
+\usepackage{ragged2e}
+
+% Mathematics
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage[algochapter, ruled, longend]{algorithm2e}
+\usepackage{prftree}
+\usepackage{unicode-math}
+
+% Source code
+\usepackage{fancyvrb}
+\usepackage[newfloat]{minted}
+
+% Boxes
+\usepackage{varwidth}
+
+% Tables
+\usepackage{booktabs}
+\usepackage{multirow}
+
+% Lists
+\usepackage[inline]{enumitem}
+
+% Graphics
+\usepackage{graphicx}
+
+% Captioning
+\usepackage[compatibility=false]{caption}
+\usepackage{subcaption}
+
+% Numbers
+\usepackage[binary-units=true]{siunitx}
+\usepackage{nth}
+
+% Plotting
+\usepackage{tikz}
+\usepackage{tikzpeople}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+
+% Quotations
+\usepackage[strict, autopunct]{csquotes}
+
+% Links and references
+\usepackage{hyperref}
+\usepackage[nameinlink]{cleveref}
+
+% Bibliographies
+\usepackage[hyperref, backref, backend=biber, block=space,%
+loadfiles, giveninits, pagetracker]{biblatex}
+
+% Dashes and hyphens
+\usepackage[shortcuts]{extdash}
+
+%
+% Package setup
+%
+
+\defaultfontfeatures{Ligatures=TeX}
+
+\addbibresource{\jobname.bib}
+
+\unimathsetup{%
+  math-style=ISO,
+  bold-style=ISO%
+}
+
+\mathtoolsset{
+  mathic%
+}
+
+\sisetup{%
+  detect-all,
+  detect-display-math,
+  binary-units%
+}
+
+\hypersetup{%
+  unicode,
+  colorlinks,
+  breaklinks,
+  pdftitle={Error-Correcting Codes in the Rank Metric},
+  pdfauthor={Dario Gjorgjevski},
+  pdfsubject={Bachelor's Thesis},
+  pdfkeywords={Coding Theory, Cryptography}%
+}
+
+\pgfplotsset{compat=newest}
+\usetikzlibrary{calc, positioning, shapes}
+
+\KOMAoptions{DIV=last}
+
+% Lengths
+\newlength{\savedcolsep}
+
+% Theorems, lemmas, etc.
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+
+% Definitions
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+% Remarks and examples
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{example}{Example}
+
+% Custom lists
+\newlist{steps}{enumerate}{1}
+\setlist[steps, 1]{label={\emph{Step \arabic*}.}, ref={\arabic*}, leftmargin=*}
+\crefname{stepsi}{step}{steps}
+\Crefname{stepsi}{Step}{Steps}
+
+\newlist{properties}{enumerate}{1}
+\setlist[properties, 1]{label={\emph{Property \arabic*}.}, ref={\arabic*}, leftmargin=*}
+\crefname{propertiesi}{property}{properties}
+\Crefname{propertiesi}{Property}{Properties}
+
+\newlist{conditions}{enumerate}{1}
+\setlist[conditions, 1]{label={\emph{Condition \arabic*}.}, ref={\arabic*}, leftmargin=*}
+\crefname{conditionsi}{condition}{conditions}
+\Crefname{conditionsi}{Condition}{Conditions}
+
+%
+% Commands
+%
+
+% Notation from linear algebra
+\AtBeginDocument{%
+  \renewcommand*{\vec}{\symbf}
+  \newcommand*{\mat}{\symbf}
+  \newcommand*{\trans}{\top}%
+}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\lspan}{span}
+\DeclareMathOperator{\supp}{supp}
+\DeclarePairedDelimiter{\basis}{\langle}{\rangle}
+\newcommand*{\M}{\ensuremath{\mathcal{M}}}
+\newcommand*{\GL}{\ensuremath{\mathsf{GL}}}
+
+% Notation from probability and statistics
+\DeclareMathOperator{\E}{E}
+\DeclareMathOperator{\var}{var}
+\DeclareMathOperator{\cov}{cov}
+
+% Notation from cryptography
+\newcommand*{\pub}{\ensuremath{\mathsf{pub}}}
+\newcommand*{\priv}{\ensuremath{\mathsf{priv}}}
+\newcommand*{\enc}{\ensuremath{\mathsf{Enc}}}
+\newcommand*{\dec}{\ensuremath{\mathsf{Dec}}}
+
+% Standard sets
+\newcommand*{\KK}{\ensuremath{\mathbb{K}}}
+\newcommand*{\FF}{\ensuremath{\mathbb{F}}}
+\newcommand*{\NN}{\ensuremath{\mathbb{N}}}
+\newcommand*{\ZZ}{\ensuremath{\mathbb{Z}}}
+\newcommand*{\RR}{\ensuremath{\mathbb{R}}}
+\newcommand*{\CC}{\ensuremath{\mathbb{C}}}
+
+% Complexity classes
+\newcommand*{\NP}{\ensuremath{\mathcal{NP}}}
+
+% Linear codes
+\newcommand*{\Gop}{\ensuremath{\Gamma}}
+\newcommand*{\Gab}{\ensuremath{\mathfrak{G}}}
+
+% arg{min,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% Sampling
+\newcommand*{\sample}{\ensuremath{\gets_{\mathrm{\$}}}}
+
+% Computational problems
+\newcommand*{\MDD}{\ensuremath{\mathsf{MDD}}}
+\newcommand*{\CSD}{\ensuremath{\mathsf{CSD}}}
+\newcommand*{\SW}{\ensuremath{\mathsf{SW}}}
+\newcommand*{\MR}{\ensuremath{\mathsf{MR}}}
+
+% Ceiling and floor
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+% Absolute value and norm
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+
+% Custom norms and distances
+\newcommand*{\normH}[1]{\ensuremath{\norm{#1}_{\mathrm{H}}}}
+\newcommand*{\normR}[2]{\ensuremath{\norm{#1}_{#2}}}
+\DeclareMathOperator{\dH}{d_H}
+\DeclareMathOperator{\dR}{d_R}
+
+% Set cardinality
+\DeclarePairedDelimiter{\card}{\lvert}{\rvert}
+
+% Gaussian binomial coefficient
+\DeclareRobustCommand{\gbinom}{\genfrac[]{0pt}{}}
+
+% Miscellaneous notation
+\newcommand*{\sys}{\ensuremath{\mathsf{sys}}}
+\newcommand*{\ext}{\ensuremath{\mathsf{ext}}}
+\newcommand*{\reg}{\ensuremath{\mathsf{reg}}}
+
+\newcommand*{\KS}{\ensuremath{\mathsf{KS}}}
+\newcommand*{\GV}{\ensuremath{\mathsf{GV}}}
+\newcommand*{\LB}{\ensuremath{\mathsf{LB}}}
+
+\newcommand*{\PISD}{\textsc{Plain}\=/ISD}
+\newcommand*{\LBISD}{LB\=/ISD}
+
+%
+% Title
+%
+
+\titlehead{\includegraphics{Logo.pdf}}
+\subject{Bachelor's Thesis}
+\title{Error\-/Correcting Codes in the Rank Metric}
+\subtitle{With Applications to Cryptography}
+\author{%
+  Dario Gjorgjevski\\%
+  \href{mailto:gjorgjevski.dario@students.finki.ukim.mk}{\nolinkurl{gjorgjevski.dario@students.finki.ukim.mk}}}
+\date{\today}
+
+%
+% Document
+%
+
+\begin{document}
+
+\addtotoclist[float]{loa}
+\setuptoc{loa}{%
+  chapteratlist, totoc, leveldown%
+}
+
+\newcommand*{\listofloaname}{\listalgorithmcfname}
+\renewcommand{\listofalgorithms}{\listoftoc{loa}}
+
+\frontmatter{}
+
+\maketitle{}
+
+\tableofcontents{}
+\listoffigures{}
+\listoftables{}
+\listofalgorithms{}
+\listoflistings{}
+
+\addchap{Abstract}
+
+Public\-/key cryptography was invented by Diffie and Hellman in order to remove
+the need for trusted couriers when exchanging secret keys that will facilitate
+secure communication.  The Diffie\--Hellman key exchange (DHKE) and the
+Rivest\--Shamir\--Adleman (RSA) cryptosystem are two of the first public\-/key
+constructions that remain largely unbroken and in use to this day.  However, the
+publication of Shor's algorithm in 1994 meant that these algorithms are rendered
+completely insecure given a quantum computer.  Even though quantum computing is
+still far beyond reach, cryptographers are pushing for so\-/called
+post\-/quantum algorithms, i.e., algorithms which are believed to be secure even
+against attacks carried on quantum computers.  Error\-/correcting codes are a
+popular way of building such algorithms and have been studied since roughly the
+same time as RSA\@.  The McEliece cryptosystem is one such construction.  It is
+based on the hardness of decoding random linear codes in the Hamming metric,
+using a scrambled Goppa code that only the holder of some secret information can
+decode efficiently.  Unfortunately, the size of this \enquote{secret
+  information} can get quite high in practice.  Trying to alleviate this,
+Gabidulin, Paramonov, and Tretjakov proposed an analogous cryptosystem that
+utilizes error\-/correcting codes in the \emph{rank metric}: the GPT
+cryptosystem.  The goal of this thesis is twofold: first, to provide a survey of
+the GPT cryptosystem, Overbeck's structural attack on it, and the most recent
+reparation by \textcite{Loi17}; and second, to investigate the applicability of
+information set decoding in the rank metric.  Information set decoding (ISD) is
+a family of algorithms that has been the most successful way to attack
+McEliece\-/like cryptosystems, but has not been explored in the context of the
+rank metric.
+
+\mainmatter{}
+
+\chapter{Introduction}\label{chap:introduction}
+
+In its advent, cryptography was used with the intention of making the
+communication between two parties secure in an ad\-/hoc manner.  During the late
+\nth{20} century, the picture of cryptography radically changed.  A rich and
+rigorous theory was developed allowing for formal arguments to be made regarding
+the security of certain constructions.  Furthermore, the field of cryptography
+now encompasses many well\-/defined objectives such as:
+\begingroup
+\setkomafont{labelinglabel}{\emph}
+\setkomafont{labelingseparator}{\normalfont}
+\begin{labeling}[~--]{non-repudiation}
+\item[confidentiality] keeping information secret from all but those
+  who are authorized to see it;
+\item[data integrity] ensuring information has not been altered by unauthorized
+  or unknown means;
+\item[authentication] corroboration of the identity of an entity (e.g., a
+  person, a computer terminal, a credit card, etc.); and
+\item[non\-/repudiation] preventing the denial of previous commitments or
+  actions.
+\end{labeling}
+\endgroup
+
+Secure communication can be established in two settings: symmetric and
+asymmetric.  As we mentioned, secure communication is concerned with the
+\emph{confidentiality} of messages: we want to make sure that a person
+intercepting a message that has been sent learns nothing (or \enquote{very
+  little}) about the message's content.  To this end, \emph{encryption}
+algorithms are employed.  We will review both the symmetric and asymmetric
+settings, but the focus of the remainder of this thesis is going to be entirely
+on algorithms for confidentiality in the asymmetric setting.
+
+\paragraph{The Symmetric Setting} In the symmetric setting, two parties share
+some secret information in advance\--- the \emph{symmetric key} (or just
+\emph{key})\--- that they use whenever they wish to communicate secretly with
+each other.  The party sending a message uses the key to \emph{encrypt} the
+message, and the receiver uses the same key to \emph{decrypt} it upon receipt.
+\Cref{fig:symmetric-setting} depicts typical communication in this setting.
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[node distance=3cm, auto]
+    \node[alice] (alice) {Alice};
+    \node[draw, right=of alice] (encryption) {\(\enc_k(m)\)} edge[<-] node[above] {Plaintext \(m\)} (alice);
+    \node[draw, right=of encryption] (decryption) {\(\dec_k(c)\)} edge[<-] node[above] {Ciphertext \(c\)} (encryption);
+    \node[bob, right=of decryption, mirrored] (bob) {Bob} edge[<-] node[above] {Plaintext \(m\)} (decryption);
+    \coordinate (center) at ($(encryption)!0.5!(decryption)$);
+    \node[draw, ellipse, below=1.5cm of center] (key) {Key \(k\)} edge[->] (encryption) edge[->] (decryption);
+  \end{tikzpicture}
+  \captionbelow{Communication in the symmetric
+    setting}\label{fig:symmetric-setting}
+\end{figure}
+
+\paragraph{The Asymmetric Setting} The asymmetric setting aims to solve the
+biggest problem of symmetric encryption: the need to securely exchange a key
+beforehand.  Indeed, an observant person will ask: if two parties using
+symmetric encryption could exchange a key without anyone knowing, why do they
+not use the same means to exchange messages?  Historically, such key exchanges
+had been done by \enquote{trusted couriers}, but in a network such as the
+Internet this is anything but a feasible solution.  Cryptography in the
+asymmetric setting is called \emph{public\-/key cryptography}.  Public\-/key
+cryptography eliminates the need for trusted couriers by having users use pairs
+of keys: \emph{public keys} which may be disseminated widely, and \emph{private
+  keys} which are known only to their owners.
+
+\Textcite{DH76} invented public\-/key cryptography by publishing the so\-/called
+\emph{Diffie\--Hellman key exchange} (DHKE).  DHKE allows two parties to
+\emph{generate} a shared secret in such a way that the secret cannot be deduced
+by observing the communication.  A few years later, \textcite{RSA78} published
+the RSA cryptosystem which can be used to encrypt and decrypt messages.  It
+remains unbroken to this day and is one of the most widely used cryptosystems.
+In a public\-/key cryptosystem such as RSA, any person can encrypt a message
+using the public key of the intended receiver; but, once encrypted, the
+ciphertext can be decrypted only with the receiver's private key.
+
+\begin{displaycquote}{Sch96}
+  Putting mail in the mailbox is analogous to encrypting with the public key;
+  anyone can do it.  Just open the slot and drop it in.  Getting mail out of a
+  mailbox is analogous to decrypting with the private key.  Generally it's hard;
+  you need welding torches.  However, if you have the secret (the physical key
+  to the mailbox), it's easy to get mail out of a mailbox.
+\end{displaycquote}
+
+Public\-/key cryptography revolves largely around the notion of \emph{one\-/way}
+and \emph{trapdoor} functions.  Informally, a one\-/way function is a function
+that is easy to compute on every input, but hard to invert given the image of a
+random input; on the other hand, a trapdoor function is a one\-/way function
+that can be inverted given some special information, called the
+\enquote{trapdoor}.  The RSA cryptosystem relies on the hardness of integer
+factorization to construct a trapdoor permutation for encryption.  The only
+computationally feasible way to invert it is by knowing the trapdoor \--{} the
+prime factors.  However, \textcite{Sho97} formulated an algorithm which can
+factor integers efficiently and thus \enquote{break} RSA\@.  There is only one
+drawback: to run it, one needs a quantum computer.  The discovery of Shor's
+algorithm led researchers to consider \emph{post\-/quantum algorithms}:
+public\-/key algorithms thought to be secure against attacks by quantum
+computers.
+
+Interestingly, a cryptosystem from roughly the same era as DHKE and RSA is
+believed to be post\-/quantum: the \emph{McEliece cryptosystem}, first
+formulated by \textcite{Eli78}.  The security of McEliece relies on the hardness
+of decoding a random linear code.  Namely, a user publishes a scrambled Goppa
+code as the public key and keeps the \enquote{unscrambled} code in private.
+Senders simply encode the message with the public code and add some errors.
+Attackers are faced with decoding the scrambled code which has no obvious
+structure, while the intended recipient has all the necessary information to
+unscramble and use (one of the) efficient decoding algorithms for Goppa codes.
+
+The best generic attacks against the McEliece cryptosystem come from a family
+of algorithms known as \emph{information set decoding}~\cite{B+12}.  The main
+disadvantage of McEliece is its key size: to achieve \num{128}\=/bit security
+against information set decoding, a key of around \SI{192}{\kilo\byte} is
+required.  \Textcite{GPT91} proposed the GPT cryptosystem which uses
+error\-/correcting codes in \emph{rank metric}.  (The Goppa codes used in
+McEliece correct errors in the \emph{Hamming metric}.)  GPT is thought to
+require considerably smaller keys for equivalent security.  The goal of this
+thesis is to provide a survey of GPT and formulate the information set decoding
+family of algorithms in the rank metric.
+
+\chapter{The GPT Cryptosystem}\label{chap:GPT}
+
+\section{Foundations}
+
+Code\-/based cryptography is concerned with the use of error\-/correcting codes
+for cryptographic purposes.  Much of the motivation and background for the
+theory comes from the landmark work of \textcite{Sha48}.  In it, he laid the
+foundations of \emph{information theory}, which deals with the transmission of
+messages over noisy channels.  A typical model of information transmission is
+given in \cref{fig:information-transmission-model}.
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[auto]
+    \node[draw] (source) {Source};
+    \node[draw, right=of source] (transmitter) {Transmitter} edge[<-] (source);
+    \node[draw, right=of transmitter] (channel) {Channel} edge[<-] (transmitter);
+    \node[draw, right=of channel] (receiver) {Receiver} edge[<-] (channel);
+    \node[draw, right=of receiver] (destination) {Destination} edge[<-] (receiver);
+
+    \node[draw, ellipse, below=of channel] (noise) {Noise source} edge[->] (channel);
+
+    \coordinate (source-transmitter) at ($(source.east)!0.5!(transmitter.west)$);
+    \coordinate (transmitter-channel) at ($(transmitter.east)!0.5!(channel.west)$);
+    \coordinate (channel-receiver) at ($(channel.east)!0.5!(receiver.west)$);
+    \coordinate (receiver-destination) at ($(receiver.east)!0.5!(destination.west)$);
+
+    \node[above=of source-transmitter] (message-1) {Message} edge[dashed] (source-transmitter);
+    \node[above=of transmitter-channel] (signal) {Signal} edge[dashed] (transmitter-channel);
+    \node[above=of channel-receiver] (noisy-signal) {Noisy signal} edge[dashed] (channel-receiver);
+    \node[above=of receiver-destination] (message-2) {Message} edge[dashed] (receiver-destination);
+  \end{tikzpicture}
+  \captionbelow{Transmitting information over a noisy
+    channel}\label{fig:information-transmission-model}
+\end{figure}
+
+We assume that a sequence of symbols from a finite alphabet\--- the
+\emph{message}\--- is transmitted over a noisy channel.  (The noise is usually
+assumed to be additive.)  Each symbol of the message has a probability to be
+affected by error; in a sense that instead of the symbol \(\mathtt{a}\), the
+receiver sees the symbol \(\mathtt{b}\).  To overcome this problem, the
+transmitted information will not only contain the message, but will also include
+redundancy based on the message's contents.
+
+Specifically, each message is mapped injectively into a \emph{codeword} through
+a process called \emph{encoding}.  Instead of the message, the codeword is
+transmitted over the noisy channel.  The receiver then uses a \emph{decoding}
+algorithm to detect and possibly correct any errors that might have occurred
+during the transmission.  In cryptography, the transmission is assumed to be
+error\-/free, but noise is added deliberately to the codeword as part of the
+encryption process.
+
+\section{Linear Codes}
+
+\Cref{sec:LC-basic-concepts} defines linear codes and information sets, while
+\cref{sec:LC-computational-problems} provides an overview and briefly discusses
+the complexity of solving some computational problems related to the decoding of
+random linear codes.
+
+\subsection{Basic Concepts}\label{sec:LC-basic-concepts}
+
+\begin{definition}[Linear code]
+  An \([n, k]\)\=/code \(\mathcal{C}\) over a finite field \(\FF\) is a
+  \(k\)\=/dimensional subspace of the vector space \(\FF^n\).  \(\mathcal{C}\)
+  is an \([n, k, d]\)\=/code if
+  \(d = \min_{\vec{x}, \vec{y} \in \mathcal{C}} \norm{\vec{x} - \vec{y}}\) for
+  some norm \(\norm{\cdot}\).  The elements of \(\mathcal{C}\) are called
+  \emph{codewords}.  \(d\) is called the \emph{minimum distance} of the code
+  with respect to \(\norm{\cdot}\).
+\end{definition}
+
+\begin{definition}[Generator matrix]
+  A full\-/rank matrix \(\mat{G} \in \FF^{k \times n}\) is said to be a
+  \emph{generator matrix} for the \([n, k]\)\=/code \(\mathcal{C}\) if its rows
+  span \(\mathcal{C}\) over \(\FF\).  In other words,
+  \[
+    \mathcal{C} = \{\vec{x} \mat{G} : \vec{x} \in \FF^k\}\text.
+  \]
+  \(\mat{G}\) defines an \emph{encoding map}
+  \(f_{\mat{G}}\colon \FF^k \to \FF^n\) given by
+  \(\vec{x} \mapsto \vec{x} \vec{G}\).
+\end{definition}
+
+Before defining the parity\-/check matrix, we introduce the dual of a code.
+
+\begin{definition}[Dual]
+  Let \(\mathcal{C}\) be an \([n, k]\)\=/code.  The \emph{dual} of
+  \(\mathcal{C}\) is the \([n, n - k]\)\=/code \(\mathcal{C}^{\perp}\) defined
+  by:
+  \[
+    \mathcal{C}^{\perp} \coloneqq
+    \{\vec{y} \in \FF^n : \forall \vec{x} \in \mathcal{C}\ldotp \vec{x} \vec{y}^{\trans} = 0\}\text.
+  \]
+\end{definition}
+
+\begin{definition}[Parity\-/check matrix]
+  A \emph{parity\-/check} matrix of a code \(\mathcal{C}\) is a generator matrix
+  of its dual, \(\mathcal{C}^{\perp}\).
+\end{definition}
+
+Let \(\mat{G}\) be a generator matrix of an \([n, k]\)\=/code \(\mathcal{C}\)
+and \(\mat{H}\) be a parity\-/check matrix of \(\mathcal{C}\).  Then
+\(\mat{G} \mat{H}^{\trans} = \vec{0}\).  Conversely, any
+\(\mat{H} \in \FF^{(n - k) \times n}\) that satisfies
+\(\mat{G} \mat{H}^{\trans} = \vec{0}\) is a parity\-/check matrix of
+\(\mathcal{C}\).
+
+A code \(\mathcal{C}\) has many generator matrix representations.  \(\mat{G}\)
+is said to be in \emph{systematic form} if its first \(k\) columns form the
+\(k \times k\) identity matrix, \(\mat{I}_k\).  For any systematic generator
+matrix \(\mat{G}_{\sys}\), each entry of the message vector appears among the
+entries of the codeword.  Given the generator matrix in systematic form
+\(\mat{G}_{\sys} = \begin{bmatrix} \mat{I}_k & \mat{Q} \end{bmatrix}\), the
+parity\-/check matrix in \emph{canonical form} is
+\(\mat{H} = \begin{bmatrix} -\mat{Q}^{\trans} & \mat{I}_{n - k} \end{bmatrix}\).
+
+\begin{example}
+  Consider the matrix \(\mat{G} \in \FF_2^{4 \times 7}\):
+  \[
+    \mat{G} =
+    \begin{bmatrix}
+      1 & 0 & 0 & 0 & 1 & 1 & 1 \\
+      0 & 1 & 0 & 0 & 0 & 1 & 1 \\
+      0 & 0 & 1 & 0 & 1 & 0 & 1 \\
+      0 & 0 & 0 & 1 & 1 & 1 & 0
+    \end{bmatrix}\text.
+  \]
+  We have that \(\rank \mat{G} = 4\), so \(\mat{G}\) generates a
+  \([7, 4]\)\=/code over \(\FF_2\).  Let \(\mat{H}\) be given as
+  \[
+    \mat{H} =
+    \begin{bmatrix}
+      1 & 0 & 1 & 1 & 1 & 0 & 0 \\
+      1 & 1 & 0 & 1 & 0 & 1 & 0 \\
+      1 & 1 & 1 & 0 & 0 & 0 & 1
+    \end{bmatrix}\text.
+  \]
+  We have \(\mat{G} \mat{H}^{\trans} = \vec{0}\) and \(\rank \mat{H} = 3\), so
+  \(\mat{H}\) is a parity\-/check matrix of the code.
+\end{example}
+
+\begin{definition}[Syndrome]
+  Let \(\mat{H}\) be a parity\-/check matrix for \(\mathcal{C}\).  The
+  \emph{syndrome} of a vector \(\vec{y} \in \FF^n\) with respect to \(\mat{H}\)
+  is the (column) vector \(\mat{H} \vec{y}^{\trans} \in \FF^{n - k}\).
+\end{definition}
+
+\begin{definition}[Information set]\label{def:information-set}
+  An \emph{information set} of an \([n, k]\)\=/code \(\mathcal{C}\) with
+  generator matrix \(\mat{G}\) is a size\=/\(k\) subset
+  \(\mathcal{I} \subset \{1, \ldots, n\}\) such that the columns of \(\mat{G}\)
+  indexed by \(\mathcal{I}\) form an invertible \(k \times k\) submatrix,
+  \(\mat{G}_{\mathcal{I}}\).  In particular,
+  \(\mat{G}_{\mathcal{I}}^{-1} \mat{G}\) is a generator matrix of
+  \(\mathcal{C}\) in systematic form (up to a permutation of columns).  If
+  \(\mat{H}\) is a parity\-/check matrix, then the columns indexed by
+  \(\{1, \ldots, n\} \smallsetminus \mathcal{I}\) form an invertible
+  \((n - k) \times (n - k)\) matrix.
+\end{definition}
+
+Let \(\vec{c} \coloneqq \vec{x} \mat{G}_{\mathcal{I}}^{-1} \mat{G}\) for some
+vector \(\vec{x} \in \FF^k\).  The \(\mathcal{I}\)\=/indexed entries of
+\(\vec{c}\) form the information vector \(\vec{x}\).  These entries are called
+\emph{information symbols}; the rest of the entries are called
+\emph{parity\-/check symbols}.
+
+\subsection{Computational Problems}\label{sec:LC-computational-problems}
+
+The decoding of random codes lends itself to many computational problems.  The
+\emph{general decoding problem} can be stated as follows: given an encoding
+function \(f\colon \FF^k \to \FF^n\) and an encoded message \(f(\vec{x})\) that
+is inflicted with random noise, determine the original message \(\vec{x}\).
+Here, \(f\) need not be linear and the noise need not be additive.
+
+However, for practical reasons, we restrict ourselves only to the linear
+setting, in which the encoding encoding function is specified by the generator
+matrix \(\mat{G}\) and generates a codeword
+\[
+  \vec{c} \coloneqq f_{\mat{G}}(\vec{x}) = \vec{x} \mat{G}\text.
+\]
+The codeword is inflicted with additive noise and received as
+\(\vec{y} \coloneqq \vec{c} + \vec{e}\), where \(\vec{e} \in \FF^n\) denotes the
+noise.
+
+\begin{definition}[\textsc{Minimum Distance Decoding}]
+  Let \(\mathcal{C}\) be an \([n, k, d]\)\=/code.  Given a received word
+  \(\vec{y}\) and \(w \in \NN\), find a codeword \(\vec{c} \in \mathcal{C}\)
+  such that \(\norm{\vec{y} - \vec{c}} \le w\).  If no such codeword exists,
+  output \(\perp\).  We denote the set of all solutions to this problem by
+  \(\MDD(\mathcal{C}, \vec{y}, w)\).
+\end{definition}
+
+When \(\norm{\cdot}\) is the Hamming norm, the decision version of
+\textsc{Minimum Distance Decoding} was proven \NP\=/complete for binary codes by
+\textcite{BEvT78} and in the general case by \textcite{Bar94}.  \textsc{Minimum
+  Distance Decoding} can also be formulated as a problem of syndrome decoding.
+
+\begin{definition}[\textsc{Computational Syndrome Decoding}]
+  Let \(\mathcal{C}\) be an \([n, k, d]\)\=/code with parity\-/check matrix
+  \(\mat{H}\).  Given a syndrome \(\vec{s} \in \FF^{n - k}\) and \(w \in \NN\),
+  find a word \(\vec{e} \in \FF^n\) such that
+  \(\mat{H} \vec{e}^{\trans} = \vec{s}\) and \(\norm{\vec{e}} \le w\).  If no
+  such word exists, output \(\perp\).  We denote the set of all solutions to
+  this problem by \(\CSD(\mat{H}, \vec{s}, w)\).
+\end{definition}
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[auto]
+    \draw[-latex] (-0.5, 0) -- (10.5, 0);
+    \foreach \x in {0, 4} \draw[shift={(\x, 0)}] (0, 3pt) -- (0, -3pt);
+    \node (w) at (11, 0) {\(w\)};
+    \node (zero) at (0, -0.5) {\(0\)};
+    \node (GV) at (4, -0.5) {\(\tau_{\GV}\)};
+    \draw[-latex] (3.5, 0.5) -- node[midway, above, label={\strut\emph{at most one solution}}] {} (0.5, 0.5);
+    \draw[-latex] (4.5, 0.5) -- node[midway, above, label={\strut\emph{multiple solutions}}] {} (7.5, 0.5);
+  \end{tikzpicture}
+  \captionbelow{Number of solutions in
+    \(\CSD(\mat{H}, \vec{s}, w)\)}\label{fig:CSD-cardinality}
+\end{figure}
+
+If we fix \(n\) and \(k\), the number of solutions in
+\(\CSD(\mat{H}, \vec{s}, w)\) is illustrated in \cref{fig:CSD-cardinality}.
+\(\tau_{\mathsf{GV}}\) is the \emph{Gilbert\--Varshamov radius}: the maximum
+radius of spheres centered at codewords of \(\mathcal{C}\) so that they together
+fit in \(\FF^n\).  For the purposes of cryptanalysis, we will restrict ourselves
+to the case when \(\CSD(\mat{H}, \vec{s}, w) \ne \emptyset\) and
+\(w < \tau_{\mathsf{GV}}\); i.e., the case with \emph{exactly one} solution.
+Closely related is the problem of finding a small\-/weight codeword
+\(\vec{c} \in \mathcal{C}\).
+
+\begin{definition}[\textsc{Subspace Weights}]
+  Let \(\mathcal{C}\) be an \([n, k, d]\)\=/code.  Given \(w \in \NN\), find a
+  codeword \(\vec{c} \in \mathcal{C}\) such that \(\norm{\vec{c}} \le w\).  If
+  no such codeword exists, output \(\perp\).  We denote the set of all solutions
+  to this problem by \(\SW(\mathcal{C}, w)\).
+\end{definition}
+
+To see the importance of \textsc{Subspace Weights}, let
+\(\vec{y} = \vec{c} + \vec{e}\) be a received word, and consider
+\(\mathcal{C}'\), the code generated by
+\[
+  \mat{G}' \coloneqq \begin{bmatrix} \mat{G} \\ \vec{y} \end{bmatrix}\text.
+\]
+In order for \(\vec{c}\) to be uniquely decodable,
+\(\norm{\vec{e}} \le t < \floor{(d - 1) / {2}}\) must hold, where \(t\) is the
+error\-/correcting capacity of \(\mathcal{C}\).  Hence
+\[
+  \mathcal{C}' = \mathcal{C} \cup \{\vec{y} + \mathcal{C}\}
+\]
+has minimum distance \(d' = \norm{\vec{e}}\) and therefore the codeword of
+minimum weight is \(\vec{e}\).  Solving \(\SW(\mathcal{C}', w')\) for
+\(w' \in \{0, \ldots, t\}\) will let us find \(\vec{e}\).
+
+\section{The McEliece Cryptosystem}
+
+This section describes the McEliece cryptosystem: its parameters, key
+generation, and encryption and decryption procedures.
+
+\paragraph{System parameters} Choose \(k, n \in \NN\) such that \(k < n\); as
+usual, \(n\) is the length and \(k\) is the dimension of the code.  Choose
+\(t \in \NN\) to be the desired error\-/correcting capability.  Recall that
+\(\Gop\) corrects errors in the Hamming metric.
+
+\paragraph{Key generation} Generate a random classical Goppa code
+\(\Gop = \Gop_q(a_1, \ldots, a_n; g)\) of dimension \(k\) over \(\FF_q\) with
+an error\-/correcting capability of \(w\).  Choose a random \(n \times n\)
+permutation matrix \(\mat{P}\) and an invertible \(k \times k\) matrix
+\(\mat{S}\).
+
+\paragraph{Public key} Tuple \((\hat{\mat{G}}, n, k, w)\), where
+\(\hat{\mat{G}} \coloneqq \mat{S} \mat{G} \mat{P}\).  \(\mat{G}\) is a
+generator matrix of \(\Gop\).
+
+\paragraph{Private key} Tuple \((\Gop, \mat{G}, \mat{P}, \mat{S})\).
+
+nformation needs to be embedded in a length\=/\(k\) word
+\(\vec{x} \in \FF_q^k\) in order to be suitable for the encryption algorithm.
+Then, \(\vec{x}\) can be encrypted with \cref{alg:mceliece-encryption}.  The
+legitimate owner of the private key can use \cref{alg:mceliece-decryption} to
+decode a ciphertext \(\vec{y}\).
+
+\begin{algorithm}
+  \caption{McEliece encryption}\label{alg:mceliece-encryption}
+  \DontPrintSemicolon{}%
+  \KwIn{Message \(\vec{x} \in \FF_q^k\), public generator matrix
+    \(\hat{\mat{G}} \in \FF_q^{k \times n}\), and \(w \in \NN\)}%
+  \KwOut{Ciphertext \(\vec{y} \in \FF_q^n\)}%
+  \Begin{%
+    \(\vec{c} \gets \vec{x} \hat{\mat{G}}\)\;%
+    \(\vec{e} \sample \FF_q^n\) with \(\normH{\vec{e}} = w\)\;%
+    \Return{\(\vec{y} = \vec{c} + \vec{e}\)}\;%
+  }
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{McEliece decryption}\label{alg:mceliece-decryption}
+  \DontPrintSemicolon{}%
+  \KwIn{Ciphertext \(\vec{y} \in \FF_q^n\) and private key
+    \((\Gop, \mat{G}, \mat{P}, \mat{S})\)}%
+  \KwOut{Message \(\vec{x} \in \FF_q^k\)}%
+  \Begin{%
+    \(\vec{y} \mat{P}^{-1} = \vec{x} \mat{S} \mat{G} + \vec{e} \mat{P}^{-1}\)%
+    \tcc*[r]{note that \(\normH{\vec{e} \mat{P}^{-1}} = w\)}
+    \(\vec{x} \gets\) decode \(\vec{y} \mat{P}^{-1}\) using an efficient
+    decoding algorithm for \(\Gop\)\;%
+    \Return{\(\vec{x}\)}\;%
+  }
+\end{algorithm}
+
+\section{Gabidulin Codes}
+
+Gabidulin codes~\cite{Gab85} correct errors in the rank metric (also called
+pattern errors) efficiently, which in general is harder than correcting errors
+in the Hamming metric.  \Textcite{GPT91} proposed a cryptosystem based on
+Gabidulin codes, known as GPT\@.  Because of its better resistance against
+general decoding attacks, smaller key sizes were proposed for GPT compared to
+the McEliece cryptosystem.  In this section, we define Gabidulin codes and give
+a formal definition of the GPT cryptosystem.
+
+\subsection{The Rank Metric}
+
+Codes in the rank metric (e.g., Gabidulin codes) are linear codes over the
+finite field \(\FF_{q^m}\) for \(q\) (power of a) prime and \(m \in \NN\).  As
+suggested by their name, they use a special concept of distance.
+
+\begin{definition}[Rank norm]
+  Let
+  \(\vec{x} \coloneqq \begin{bmatrix} \vec{x}_1 & \cdots & \vec{x}_n \end{bmatrix} \in \FF_{q^m}^n\)
+  and \(\{\beta_1, \ldots, \beta_m\}\) be a basis of \(\FF_{q^m}\) over
+  \(\FF_q\).  We can write
+  \begin{equation}\label{eq:extension-field-as-vector-space}
+    x_i = \sum_{j = 1}^m x_{i, j} \beta_j
+  \end{equation}
+  for all \(i = 1, \ldots, n\); with \(x_{i, j} \in \FF_q\).  The \emph{rank
+    norm} \(\normR{\cdot}{q}\) is defined as
+  \[
+    \normR{\vec{x}}{q} \coloneqq
+    \rank\left(
+      \begin{bmatrix}
+        x_{1, 1} & \cdots & x_{1, m} \\
+        \vdots & \ddots & \vdots \\
+        x_{n, 1} & \cdots & x_{n, m}
+      \end{bmatrix}
+    \right)\text,
+  \]
+  with the \(x_{i, j}\)'s as given by \cref{eq:extension-field-as-vector-space}.
+\end{definition}
+
+The rank norm of \(\vec{x} \in \FF_{q^m}^n\) is independent of the choice of
+basis and induces a metric called the \emph{rank metric} defined in
+\cref{def:rank-metric}.  Note that every \(\mat{T} \in \GL_n(\FF_q)\) is an
+isometry for the rank metric:
+\(\normR{\vec{x} \mat{T}}{q} = \normR{\vec{x}}{q}\).
+
+\begin{definition}[Rank metric]\label{def:rank-metric}
+  Let \(\vec{x}, \vec{y} \in \FF_{q^m}^n\).  The function
+  \(\dR(\vec{x}, \vec{y}) \coloneqq \normR{\vec{x} - \vec{y}}{q}\) is a metric
+  over \(\FF_{q^m}^n\), called the \emph{rank metric} (or \emph{rank distance}).
+\end{definition}
+
+\begin{lemma}
+  Let \(\normH{\cdot}\) denote the Hamming norm.  Then, for all
+  \(\vec{x} \in \FF_{q^m}^n\),
+  \[
+    \normR{\vec{x}}{q} \le \normH{\vec{x}}\text.
+  \]
+  \begin{proof}
+    Let \(\normH{\vec{x}} \eqqcolon k\).  By definition, \(\vec{x}\) has \(k\)
+    nonzero entries.  Thus, the remaining \(n - k\) entries are all zero and do
+    not influence \(\normR{\vec{x}}{q}\) whatsoever.  The result immediately
+    follows.  Equality holds if and only if all \(k\) nonzero entries are
+    linearly independent over \(\FF_q\).
+  \end{proof}
+\end{lemma}
+
+\begin{lemma}[Singleton bound]
+  Let \(\mathcal{C}\) be an \([n, k, d]\)\=/code over \(\FF_q\) in the Hamming
+  metric.  Then, the \emph{Singleton bound} states that
+  \[
+    q^k \le q^{n - d + 1} \implies k \le n - d + 1\text,
+  \]
+  which is usually written as
+  \[
+    d \le n - k + 1\text.
+  \]
+  \begin{proof}
+    See~\cite{Sin64}.
+  \end{proof}
+\end{lemma}
+
+Due to the Singleton bound in the Hamming metric, the minimum rank distance
+\(d\) of an \([n, k, d]\)\=/code over \(\FF_{q^m}\) satisfies
+\begin{equation}\label{eq:singleton-bound}
+  d \le n - k + 1\text.
+\end{equation}
+An alternative bound\--- tighter than that in \cref{eq:singleton-bound} when
+\(n \le m\)\--- is given in~\cite{Gab85}:
+\[
+  d \le \frac{m}{n}(n - k) + 1\text.
+\]
+Combining the two bounds gives
+\[
+  d \le \min\{m, n\} - \max\{m, n\} k + 1\text.
+\]
+
+\subsection{Generating Gabidulin Codes}
+
+Codes which achieve the Singleton bound in the rank metric with equality are
+called Maximum Rank Distance (MRD) codes.  \Textcite{Gab85} constructed a family
+of MRD codes over \(\FF_{q^m}\) of length \(n \le m\).
+
+For any \(x \in \FF_{q^m}\) and any \(i \in \ZZ\), the quantity \(x^{q^i}\) is
+denoted by \(x^{[i]}\).  The notation is extended to vectors and matrices in a
+component\-/wise manner.  \Cref{lem:frobenius-automorphism-properties} shows
+some useful properties of the operation.
+
+\begin{lemma}\label{lem:frobenius-automorphism-properties}
+  For any \(\mat{A} \in \FF_{q^m}^{l \times s}\) and
+  \(\mat{B} \in \FF_{q^m}^{k \times n}\), and for any
+  \(\alpha, \beta \in \FF_q\):
+  \begin{enumerate}
+  \item If \(l = k\) and \(s = n\), then
+    \[
+      {(\alpha \mat{A} + \beta \mat{B})}^{[i]} = \alpha \mat{A}^{[i]} + \beta \mat{B}^{[i]}\text.
+    \]
+  \item If \(s = k\) then
+    \[
+      {(\mat{A} \mat{B})}^{[i]} = \mat{A}^{[i]} \mat{B}^{[i]}\text.
+    \]
+    In particular, if \(\mat{S} \in \GL_n(\FF_{q^m})\), then
+    \(\mat{S}^{[i]} \in \GL_n(\FF_{q^m})\) and
+    \[
+      {(\mat{S}^{[i]})}^{-1} = {(\mat{S}^{-1})}^{[i]}\text.
+    \]
+  \end{enumerate}
+  \begin{proof}
+    The proof of the two points comes directly from the properties of the
+    Frobenius operators: multiplicative and \(\FF_q\)\=/linear.  For the last
+    point, note that since \(\mat{S} \mat{S}^{-1} = \mat{I}_n\), it is also true
+    that \(\mat{S}^{[i]} {(\mat{S}^{-1})}^{[i]} = \mat{I}_n\).  This implies
+    that \(\mat{S}^{[i]} \in \GL_n(\FF_{q^m})\) and hence
+    \({(\mat{S}^{[i]})}^{-1} = {(\mat{S}^{-1})}^{[i]}\).
+  \end{proof}
+\end{lemma}
+
+We are now ready to introduce the Gabidulin codes.
+
+\begin{definition}[Gabidulin code]
+  Let
+  \(\vec{g} \coloneqq \begin{bmatrix} g_1 & \cdots & g_n \end{bmatrix} \in \FF_{q^m}^n\)
+  with all \(g_i\) independent over the base field.  (This implies \(n \le m\).)
+  The code spanned by
+  \begin{equation}\label{eq:gabidulin-code-generator}
+    \mat{G} \coloneqq
+    \begin{bmatrix}
+      g_1 & \cdots & g_n \\
+      g_1^{[1]} & \cdots & g_n^{[1]} \\
+      \vdots & \ddots & \vdots \\
+      g_1^{[k - 1]} & \cdots & g_n^{[k - 1]}
+    \end{bmatrix}
+  \end{equation}
+  is called a \emph{Gabidulin code} with dimension \(k\).  The vector
+  \(\vec{g}\) is called a \emph{generator vector} of the Gabidulin code.  We
+  denote this code \(\Gab_k(\vec{g})\).  A matrix of the form
+  \cref{eq:gabidulin-code-generator} is called a \emph{\(q\)\=/Vandermonde
+    matrix}.
+  \begin{remark}
+    The vector \(\vec{g}\) is not unique; all vectors of the form
+    \(\gamma \vec{g}\) with \(\gamma \in \FF_{q^m} \smallsetminus \{0\}\)
+    generate the same code.
+  \end{remark}
+\end{definition}
+
+\begin{theorem}
+  Gabidulin codes are Maximum Rank Distance (MRD) codes.
+  \begin{proof}
+    It is sufficient to show that for any \(\mat{X} \in \FF_{q}^{k \times n}\)
+    with \(\rank \mat{X} = k\), \(\rank(\mat{G} \mat{X}^{\trans}) = k\) as well.
+    Note that
+    \[
+      \mat{G} \mat{X}^{\trans} =
+      \begin{bmatrix}
+        f_1 & \cdots & f_n \\
+        f_1^{[1]} & \cdots & f_n^{[1]} \\
+        \vdots & \ddots & \vdots \\
+        f_1^{[k - 1]} & \cdots & f_n^{[k - 1]}
+      \end{bmatrix}
+    \]
+    with
+    \[
+      \begin{bmatrix}
+        f_1 & \cdots & f_k
+      \end{bmatrix} =
+      \begin{bmatrix}
+        g_1 & \cdots & g_k
+      \end{bmatrix}\mat{X}^{\trans}\text.
+    \]
+    Since \(\normR{g}{q} = n\), \(\normR{f}{q} = \min\{n, \rank\mat{X}\} = k\).
+    From here, \(\rank(\mat{G} \mat{X}^{\trans}) = k\).
+\end{proof}
+\end{theorem}
+
+An \([n, k]\)\=/Gabidulin code has minimum distance \(d = n - k + 1\) and
+corrects errors of rank up to \(t \coloneqq \floor{(n - k) / {2}}\).  For all
+\(\mat{T} \in \operatorname{GL}_n(\FF_q)\), \(\mat{G} \mat{T}\) is a generator
+matrix of the Gabidulin code with generator vector \(\vec{g} \mat{T}\).
+
+\begin{lemma}
+  Let \(\Gab_k(\vec{g})\) be an \([n, k]\)\=/Gabidulin code over \(\FF_{q^m}\)
+  with generator vector \(\vec{g}\).  The dual of \(\Gab_k(\vec{g})\) is the
+  Gabidulin code \(\Gab_{n - k}(\vec{h})\), where
+  \(\vec{h} = \vec{y}^{[-(n - k - 1)]}\) for some
+  \(\vec{y} \in {\Gab_{n - 1}(\vec{g})}^{\perp}\).
+  \begin{proof}
+    Remark from \cref{eq:gabidulin-code-generator} that
+    \[
+      {\Gab_{n - 1}(\vec{g})}^{\perp} \subset
+      {\Gab_{n - 2}(\vec{g})}^{\perp} \subset \cdots \subset
+      {\Gab_{k}(\vec{g})}^{\perp}\text.
+    \]
+    Since \({\Gab_{n - 1}(\vec{g})}^{\perp}\) is an MRD code of dimension \(1\),
+    its minimum distance is \(d = n\).  Thus, all of its nonzero elements are of
+    rank \(n\).  Let \(\vec{y} \in {\Gab_{n - 1}(\vec{g})}^{\perp}\) with
+    \(\vec{y} \ne \vec{0}\).  We have
+    \[
+      \forall i \in \{0, \ldots, n - 2\}\ldotp
+      \sum_{j = 1}^n y_j g_j^{[i]} = 0\text.
+    \]
+    This implies that
+    \[
+      \forall i \in \{0, \ldots, n - 2\}\ldotp
+      \sum_{j = 1}^n y_j^{[-1]} g_j^{[i - 1]} = 0\text,
+    \]
+    and in particular,
+    \[
+      \forall i \in \{0, \ldots, n - 3\}\ldotp
+      \sum_{j = 1}^n y_j^{[-1]} g_j^{[i - 1]} = 0\text.
+    \]
+    Thus \(\vec{y}^{[-1]} \in {\Gab_{n - 2}(\vec{g})}^{\perp}\).  We can argue
+    by induction that
+    \[
+      \forall u \in \{0, \ldots, n - 1\}\ldotp
+      \vec{y}^{[-u]} \in {\Gab_{n - 1 - u}(\vec{g})}^{\perp}\text,
+    \]
+    and for a given \(u \in \{0, \ldots, n - 1\}\) we have
+    \[
+      \forall i \in \{0, \ldots, u\}\ldotp
+      \vec{y}^{[-u + i]} \in {\Gab_{n - 1 - u + i}(\vec{g})}^{\perp} \subset
+      {\Gab_{n - 1 - u}(\vec{g})}^{\perp}\text.
+    \]
+    Notably, for \(u = n - k - 1\) and \(\vec{h} \coloneqq \vec{y}^{[-u]}\), we
+    have \(\vec{h}^{[i]} \in {\Gab_k(\vec{g})}^{\perp}\) for all
+    \(i \in \{0, \ldots, n - k - 1\}\).  In other words,
+    \[
+      {\Gab_k(\vec{g})}^{\perp} = \Gab_{n - k}(\vec{g})\text.
+    \]
+  \end{proof}
+\end{lemma}
+
+\begin{corollary}
+  The parity\-/check matrix of \(\Gab_k(\vec{g})\) can be written as
+  \[
+    \mat{H} =
+    \begin{bmatrix}
+      h_1 & \cdots & h_n \\
+      h_1^{[1]} & \cdots & h_n^{[1]} \\
+      \vdots & \ddots & \vdots \\
+      h_1^{[d - 2]} & \cdots & h_n^{[d - 2]}
+    \end{bmatrix}\text,
+  \]
+  for an appropriate choice of \(\vec{h}\).  (Recall that in the case of
+  Gabidulin codes, \(d = n - k + 1\).)
+\end{corollary}
+
+\begin{example}
+  Let \(\FF_2^2 = \FF_2[\alpha]\) and
+  \[
+    \mat{G} = \begin{bmatrix} 1 & \alpha \end{bmatrix}\text.
+  \]
+  Then the code generated by \(\mat{G}\) is
+  \[
+    \begin{aligned}
+      \mathcal{C} &=
+      \left\{
+        \begin{bmatrix} 0 & 0 \end{bmatrix},
+        \begin{bmatrix} 1 & \alpha \end{bmatrix},
+        \begin{bmatrix} \alpha & \alpha^2 \end{bmatrix},
+        \begin{bmatrix} \alpha^2 & 1 \end{bmatrix}
+      \right\} \\
+      &\cong
+      \left\{
+        \begin{bmatrix} 0 & 0 \\ 0 & 0 \end{bmatrix},
+        \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix},
+        \begin{bmatrix} 0 & 1 \\ 1 & 1 \end{bmatrix},
+        \begin{bmatrix} 1 & 1 \\ 1 & 0 \end{bmatrix}
+      \right\}
+    \end{aligned}\text.
+  \]
+  It has dimension \(1\) (over \(\FF_{2^2}\)) and minimum distance \(2\) (over
+  \(\FF_2\)).  A respective parity\-/check matrix is
+  \[
+    \mat{H} = \begin{bmatrix} \alpha & 1 \end{bmatrix}\text.
+  \]
+\end{example}
+
+\section{Decoding Gabidulin Codes}\label{sec:gabidulin-code-decoding}
+
+\begin{definition}[Linearized polynomial]
+  A \emph{linearized polynomial} \(F(z)\) over \(\FF_{q^m}\) is a polynomial of
+  the form \(F(z) = \sum_{i = 0}^u f_i z^{[i]}\), where \(f_i \in \FF_{q^m}\)
+  for all \(0 \le i \le u\).  We refer to \(u\) as the \emph{degree} of
+  \(F(z)\), denoted \(\deg F(z)\).
+\end{definition}
+
+Note that for any \(\alpha \in \FF_{q^m}, \alpha^{[m]} = \alpha^{[0]}\), hence
+\(u < m\).  Linearized polynomials can be viewed as linear operators over
+\(\FF_{q^m}\), thus their roots form a linear subspace of \(\FF_{q^m}\) with
+dimension at most equal to their degrees.  They form an algebra under addition
+and the symbolic product, defined as \(L(z) \otimes M(z) \coloneqq L(M(z))\).
+Note that the symbolic product is not commutative, so we require both left\=/{}
+and right\-/long divisions for linearized polynomials.  These divisions can be
+computed by the \emph{extended Euclidean algorithm} for linearized
+polynomials~\cite{WSB10}.
+
+Recall that, for an appropriate choice of \(\vec{h}\), the parity\-/check matrix
+of a Gabidulin code can be written as
+\[
+  \mat{H} =
+  \begin{bmatrix}
+    h_1 & \cdots & h_n \\
+    h_1^{[1]} & \cdots & h_n^{[1]} \\
+    \vdots & \ddots & \vdots \\
+    h_1^{[d - 2]} & \cdots & h_n^{[d - 2]}
+  \end{bmatrix}\text.
+\]
+Suppose we receive a vector \(\vec{y} \coloneqq \vec{c} + \vec{e}\) with
+\(\normR{\vec{e}}{q} \eqqcolon w \le \floor{(d - 1) / {2}}\).  The objective is
+to determine \(\vec{e}\).  We denote
+\(\vec{e} = \begin{bmatrix} E_1 & \cdots & E_w \end{bmatrix}\mat{Y}\), where the
+\(E_j \in \FF_{q^m}\) are linearly independent and
+\(\mat{Y} \in \FF_q^{w \times n}\) has full rank.  The decoding of a Gabidulin
+code defined by the parity\-/check matrix \(\mat{H}\) consists of six steps:
+\begin{steps}
+\item\label{stp:GC-decoding-1} Calculate the syndrome
+  \(\vec{s} = \mat{H} \vec{y}^{\trans} \eqqcolon
+  \begin{bmatrix} s_1 & \cdots & s_{d - 1} \end{bmatrix}^{\trans}\).
+\item\label{stp:GC-decoding-2} Determine \(\Lambda(z)\) and \(F(z)\) such that
+  \(\deg F(z) < w\) and \(F(z) = \Lambda(z) \otimes S(z) \pmod{z^{[d - 1]}}\)
+  using the extended Euclidean algorithm.
+\item\label{stp:GC-decoding-3} Determine \(w\) linearly independent roots
+  \(E_1, \ldots, E_w\) of \(\Lambda(z)\).
+\item\label{stp:GC-decoding-4} Determine
+  \(\vec{x} \coloneqq \begin{bmatrix} x_1 & \cdots & x_r \end{bmatrix}\) using
+  \(\sum_{j = 1}^r E_j x_j^{[p - 1]} = s_p\) for all \(1 \le p \le w\).
+\item\label{stp:GC-decoding-5} Determine \(\mat{Y}\) using
+  \(x_p = \sum_{j = 1}^n Y_{p, j} h_j\) for all \(1 \le p \le w\).
+\item\label{stp:GC-decoding-6} Calculate
+  \(\vec{e} = \begin{bmatrix} E_1 & \cdots & E_w \end{bmatrix} \mat{Y}\).
+\end{steps}
+
+The complxity of \crefrange{stp:GC-decoding-1}{stp:GC-decoding-6} is
+\(\mathcal{O}(d^3 + d n)\).
+
+\section{Description of the GPT Cryptosystem}
+
+In this section, we describe the details of the GPT cryptosystem.  The original
+proposal by \textcite{GPT91} was attacked successfully by \textcite{Gib95,
+  Gib96}.  A reparation resisting the attack was proposed by \textcite{GO01}.
+This reparation was later attacked by \textcite{Ove05, Ove06, Ove08}, which is
+the focus of \cref{chap:structural-attacks}.  We also show that more elaborate
+reparations can all be reduced to a common form.
+
+\subsection{Original Proposal by \texorpdfstring{\textcite{GPT91}}{Gabidulin,
+    Paramonov, and Tretjakov}}
+
+\paragraph{System parameters} Choose \(k, n, m \in \NN\) such that
+\(k < n \le m\).  Define the error\-/correcting capacity
+\(t \coloneqq \floor{(n - k) / {2}}\).
+
+\paragraph{Key generation} Pick \(\vec{g} \in \FF_{q^m}^n\) with
+\(\normR{\vec{g}}{q} = n\), and define \(\mat{G}\) as in
+\cref{eq:gabidulin-code-generator}; i.e., as a generator matrix of
+\(\Gab_k(\vec{g})\).  Define the \emph{distortion} transformation
+\[
+  \mathcal{D}\colon \FF_{q^m}^{k \times n} \to \FF_{q^m}^{k \times n}
+\]
+as
+\[
+  \mathcal{D}(\mat{G}) \coloneqq \mat{S}(\mat{G} + \mat{X})\text;
+\]
+where \(\mat{X} \in \FF_{q^m}^{k \times n}\) is a random matrix of prescribed
+rank \(t_{\mat{X}}\) and \(\mat{S} \in \GL_k(\FF_{q^m})\).
+
+\paragraph{Public key} Tuple \((\mat{G}_{\pub}, t_{\pub})\), where
+\(\mat{G}_{\pub} \coloneqq \mathcal{D}(\mat{G})\) and
+\(t_{\pub} \coloneqq t - t_{\mat{X}}\).
+
+\paragraph{Private key} Tuple \((\mat{G}, \mat{S})\).
+
+\paragraph{Encryption} To encrypt a message \(\vec{x} \in \FF_{q^m}^k\), we
+choose a random error \(\vec{e} \in \FF_{q^m}^n\) with
+\(\normR{\vec{e}}{q} \le t_{\pub}\) and compute the ciphertext
+\[
+  \vec{y} = \vec{x} \mat{G}_{\pub} + \vec{e}\text.
+\]
+
+\paragraph{Decryption} To decrypt a ciphertext \(\vec{y}\), we simply apply the
+decoding procedure for Gabidulin codes (\cref{sec:gabidulin-code-decoding}) to
+it.  The received word can be decoded since it is corrupted by
+\(\vec{x} \mat{S} \mat{X} + \vec{e}\) whose rank is less than or equal to \(t\)
+since
+\[
+  \normR{\vec{x} \mat{S} \mat{X}}{q} \le t_{\mat{X}}
+\]
+and
+\[
+  \normR{\vec{x} \mat{S} \mat{X} + \vec{e}}{q} \le
+  \normR{\vec{x} \mat{S} \mat{X}}{q} + \normR{\vec{e}}{q} \le
+  t\text.
+\]
+
+However, \textcites{Gib95, Gib96} showed that the GPT cryptosystem as defined
+above is vulnerable to a polynomial\-/time key\-/recovery attack.  Consequently,
+\textcite{GO01} proposed a reparation by considering a more general
+transformation combining the distortion matrix \(\mat{X}\) with a column
+scrambler \(\mat{P}\) over the base field.
+
+\subsection{Reparation by \texorpdfstring{\textcite{GO01}}{Gabidulin and
+    Ourivski}}
+
+In order to mask the structure better, a more elaborate distortion
+transformation was proposed.  Let \(l \in \NN\) with \(l \ll n\).  The
+distortion transformation is now of the form
+\begin{equation}\label{eq:distortion-transformation}
+  \mathcal{D}(\mat{G}) \coloneqq
+  \mat{S}
+  \begin{bmatrix} \mat{X}_1 & \mat{G} + \mat{X}_2 \end{bmatrix}
+  \mat{P}\text,
+\end{equation}
+where \(\mat{X}_1 \in \FF_{q^m}^{k \times l}\),
+\(\mat{X}_2 \in \FF_{q^m}^{k \times n}\) with \(\rank \mat{X}_2 < t\), and
+\(\mat{P} \in \GL_{n + l}(\FF_q)\).  The public generator matrix is again
+\(\mat{G}_{\pub} \coloneqq \mathcal{D}(\mat{G})\); while the public rank
+parameter is \(t_{\pub} = t - t_{\mat{X}_2}\), where
+\(t_{\mat{X}_2} \coloneqq \rank \mat{X}_2\).
+
+The decryption process computes
+\[
+  \mat{P}^{-1} \coloneqq
+  \begin{bmatrix} \mat{Q}_1 & \mat{Q}_2 \end{bmatrix}\text,
+\]
+where \(\mat{Q}_1 \in \FF_q^{(n + l) \times l}\), and
+\(\mat{Q}_2 \in \FF_q^{(l + n) \times n}\).  The last \(n\) components of
+\(\vec{y} \mat{P}^{-1}\) form the vector
+\[
+  \vec{x} \mat{S} \mat{G} + \vec{x} \mat{S} \mat{X}_2 + \vec{e} \mat{Q}_2\text.
+\]
+Now, since \(\normR{\vec{e} \mat{Q}_2}{q} \le \normR{\vec{e}}{q}\) and
+\(\normR{\vec{x} \mat{S} \mat{X}_2}{q} \le \normR{\mat{X}_2}{q}\), it follows
+that
+\[
+  \normR{\vec{x} \mat{S} \mat{X}_2 + \vec{e} \mat{Q}_2}{q} \le t\text.
+\]
+In other words, applying the decoding procedure for Gabidulin codes to the last
+\(n\) components of \(\vec{y} \mat{P}^{-1}\) allows the holder of the private
+key to compute \(\vec{x} \mat{S}\), and thus \(\vec{x}\).
+
+\(\mat{X} \coloneqq \begin{bmatrix} \mat{X}_1 & \mat{X}_2 \end{bmatrix} \in \FF_{q^m}^{k \times (l + n)}\)\---
+called the \emph{distortion matrix}\--- is needed to mask the structure of
+\(\mat{G}\).  Intuitively, if the value of \(t_{\mat{X}_2}\)\--- the
+\emph{distortion parameter}\--- is higher, the work factor of any structural
+attack increases.  However, a higher value for \(t_{\mat{X}_2}\) implies a
+smaller rank of the error, making generic decoding more feasible.
+\Textcite{GY05} outlined a procedure for choosing the optimal distortion
+parameter.
+
+\subsection{Common Form of the Public Key}
+
+We show that a distortion caused by
+\(\mat{X} \coloneqq \begin{bmatrix} \mat{X}_1 & \mat{X}_2 \end{bmatrix}\) with
+\(\rank \mat{X}_2 = t_{\mat{X}_2}\) can be concentrated in just
+\(t_{\mat{X}_2}\) columns~\cite{Ksh07}.
+
+\begin{theorem}
+  Let \(\mat{G}_{\pub}\) be as in \cref{eq:distortion-transformation} and assume
+  that \(\rank \mat{X}_2 = t_{\mat{X}_2}\).  Then, there exist
+  \(\mat{P}^* \in \GL_{l + n}(\FF_q)\),
+  \(\mat{X}^* \in \FF_{q^m}^{k \times (l + t_{\mat{X}_2})}\), and \(\mat{G}^*\)
+  which generates an \([n - t_{\mat{X}_2}, k]\)\=/Gabidulin code
+  \(\Gab_k(\vec{g}^*)\) such that
+  \[
+    \mat{G}_{\pub} =
+    \mat{S} \begin{bmatrix} \mat{X}^* & \mat{G}^* \end{bmatrix} \mat{P}^*\text.
+  \]
+  Furthermore, \(\Gab_k(\vec{g}^*)\) can correct more than \(t_{\pub}\) errors.
+  \begin{proof}
+    Since \(\rank \mat{X}_2 = t_{\mat{X}_2}\), there exist
+    \(\mat{T}_2 \in \GL_n(\FF_q)\), and
+    \(\mat{X}'_2 \in \FF_{q^m}^{k \times t_{\mat{X}_2}}\) such that
+    \[
+      \mat{X}_2 \mat{T}_2 = \begin{bmatrix} \mat{X}'_2 & \mat{0} \end{bmatrix}\text.
+    \]
+    (Consider the process of Gaussian elimination.)  Thus, letting
+    \[
+      \mat{T} =
+      \begin{bmatrix}
+        \mat{I}_l & \mat{0} \\
+        \mat{0} & \mat{T}_2
+      \end{bmatrix}\text,
+    \]
+    we obtain
+    \[
+      \begin{aligned}
+        \mat{G}_{\pub} &= \mat{S} \begin{bmatrix} \mat{X}_1 & \mat{G} + \mat{X}_2 \end{bmatrix} \mat{P} \\
+        &= \mat{S} \begin{bmatrix} \mat{X}_1 & \mat{G} \mat{T}_2 + \mat{X}_2 \mat{T}_2 \end{bmatrix} \mat{T}^{-1} \mat{P} \\
+        &\eqqcolon \mat{S} \begin{bmatrix} \mat{X}_1 & \mat{G}' + \mat{X}_2 \mat{T}_2 \end{bmatrix} \mat{Q}\text;
+      \end{aligned}
+    \]
+    where \(\mat{G}' \coloneqq \mat{G} \mat{T}_2\), and
+    \(\mat{Q} \coloneqq \mat{T}^{-1} \mat{P}\).  \(\mat{G}'\) generates the
+    \([n, k]\)\=/Gabidulin code \(\Gab_k(\vec{g}')\), with
+    \(\vec{g}' = \vec{g} \mat{T}_2\).  If we decompose \(\mat{G}'\) as
+    \(\begin{bmatrix} \mat{G}'_1 & \mat{G}'_2 \end{bmatrix}\), where
+    \(\mat{G}'_1 \in \FF_{q^m}^{k \times t_{\mat{X}_2}}\), and
+    \(\mat{G}'_2 \in \FF_{q^m}^{k \times (n - t_{\mat{X}_2})}\), we obtain
+    \[
+      \mat{G}' + \mat{X}_2 \mat{T}_2 = \begin{bmatrix} \mat{G}'_1 + \mat{X}'_2 & \mat{G}'_2 \end{bmatrix}\text.
+    \]
+    By setting
+    \(\mat{X}^* = \begin{bmatrix} \mat{X}_1 & \mat{G}'_1 + \mat{X}'_2 \end{bmatrix}\),
+    we get the desired result.  \(\mat{G}'_2\) generates the
+    \([n - t_{\mat{X}_2}, k]\)\=/Gabidulin code \(\Gab_k(\vec{g}'_2)\), where
+    \(\vec{g}'_2 = \begin{bmatrix} g'_{t_{\mat{X}_2} + 1} & \cdots & g'_n \end{bmatrix}\).
+    The error\-/correction capacity \(t^*\) of \(\Gab_k(\vec{g}'_2)\) is
+    \((n - t_{\mat{X}_2} - k) / {2} = t - t_{\mat{X}_2} / {2} \implies t^* > t - t_{\mat{X}_2}\).
+  \end{proof}
+\end{theorem}
+
+\chapter{Structural Attacks Against GPT}\label{chap:structural-attacks}
+
+Gabidulin codes possess a rich structure that has been exploited to mount
+attacks on the GPT cryptosystem.  In this chapter, we review the most notable of
+these attacks: Overbeck's attack.  We prove that Overbeck's attack applies to a
+very general form of the GPT cryptosystem, and then state the properties that
+make the attack possible.  At the end, we formulate Loidreau's recent reparation
+which avoids Overbeck's attack.
+
+\section{Intuition Behind the Attacks}
+
+Let \(\mathcal{C}\) be an \([n, k, d]\)\=/Gabidulin code generated by
+\(\mat{G}\).  Recall that \(\mat{G}\) is of the form
+\[
+  \begin{bmatrix}
+    g_1 & \cdots & g_n \\
+    g_1^{[1]} & \cdots & g_n^{[1]} \\
+    \vdots & \ddots & \vdots \\
+    g_1^{[k - 1]} & \cdots & g_n^{[k - 1]}
+  \end{bmatrix}\text.
+\]
+Now, one can see that
+\[
+  \mathcal{C}^{[1]} \cup \mathcal{C}
+\]
+represents a Gabidulin code of dimension \(k - 1\).  (\(\mathcal{C}^{[1]}\)
+denotes the code generated by \(\mat{G}^{[1]}\).)  This was the basis of a
+polynomial time algorithm to retrieve the hidden Gabidulin structure in the GPT
+cryptosystem.
+
+\section{Distinguishing Properties}
+
+We now formally state the distinguishing properties of Gabidulin codes that have
+been exploited by \textcite{Ove05, Ove06, Ove08} to mount successful attacks.
+
+\begin{definition}
+  For any \(i \in \NN\), let
+  \(\Lambda_i\colon \FF_{q^m}^{k \times n} \to \FF_{q^m}^{i k \times n}\) be
+  the \(\FF_q\)\=/linear operator defined as:
+  \[
+    \Lambda_i(\mat{X}) \coloneqq
+    \begin{bmatrix}
+      \mat{X}^{[0]} \\
+      \mat{X}^{[1]} \\
+      \vdots \\
+      \mat{X}^{[i]}
+    \end{bmatrix}\text.
+  \]
+\end{definition}
+
+For any code \(\mathcal{C}\) generated by \(\mat{G}\), we denote by
+\(\Lambda_i(\mathcal{C})\) the code generated by \(\Lambda_i(\mat{G})\).
+
+\begin{lemma}
+  Let \(\vec{g} \in \FF_{q^m}^n\) with \(\normR{\vec{g}}{q} = n\).  For
+  \(k, i \in \NN\) such that \(k \le n\) and \(i \le n - k - 1\), we have:
+  \[
+    \Lambda_i(\Gab_k(\vec{g})) = \Gab_{k + i}(\vec{g})\text.
+  \]
+\end{lemma}
+
+On the other hand, if \(\mat{G}\) is a randomly\-/drawn matrix, we obtain
+something quite different.
+
+\begin{lemma}
+  If \(\mathcal{C} \subset \FF_{q^m}^n\) is a code generated by a random matrix
+  \(\mat{G} \in \FF_{q^m}^{k \times n}\),
+  \[
+    \dim \Lambda_i(\mathcal{C}) = \min\{n, (i + 1) k\}
+  \]
+  with high probability.
+\end{lemma}
+
+\section{Overbeck's Attack}
+
+\begin{lemma}
+  Let
+  \(\mat{P} = \begin{bsmallmatrix} \mat{A} & \mat{0} \\ \mat{C} & \mat{D} \end{bsmallmatrix}\)
+  where \(\mat{A}\) and \(\mat{D}\) are square matrices.  \(\mat{P}\) is
+  nonsingular if and only if \(\mat{A}\) and \(\mat{D}\) are nonsingular, and
+  \[
+    \mat{P}^{-1} =
+    \begin{bmatrix}
+      \mat{A}^{-1} & \mat{0} \\
+      -\mat{D}^{-1} \mat{C} \mat{A}^{-1} & \mat{D}^{-1}
+    \end{bmatrix}\text.
+  \]
+\end{lemma}
+
+Assume that
+\(\mat{G}_{\pub} = \mat{S} \begin{bmatrix} \mat{X} & \mat{G}\end{bmatrix} \mat{P}\)
+is the public generator matrix with \(\mat{P} \in \GL_{l + n}( \FF_q)\),
+\(\mat{X} \in \FF_{q^m}^{k \times l}\) and \(\mat{G}\) generates a Gabidulin
+code \(\Gab_k(\vec{g})\).  Observe that
+\[
+  \Lambda_i(\mat{G}_{\pub}) =
+  \mat{S}_{\ext} \begin{bmatrix} \Lambda_i(\mat{X}) & \Lambda_i(\mat{G}) \end{bmatrix} \mat{P}\text,
+\]
+where
+\[
+  \mat{S}_{\ext} \coloneqq
+  \begin{bmatrix}
+    \mat{S}^{[0]} & \cdots & \mat{0} \\
+    \vdots & \ddots & \vdots \\
+    \mat{0} & \cdots & \mat{S}^{[i]}
+  \end{bmatrix}\text.
+\]
+Since \(\Lambda_i(\mat{G})\) generates \(\Gab_{k + i}(\vec{g})\), there exists
+\(\mat{S}' \in \GL_{k (i + 1)}(\FF_{q^m})\) such that
+\begin{equation}\label{eq:extended-public-key}
+  \mat{S}' \Lambda_i(\mat{G}_{\pub}) =
+  \begin{bmatrix}
+    \mat{X}^* & \mat{G}_{k + i} \\
+    \mat{X}^{**} & \mat{0}
+  \end{bmatrix}\text.
+\end{equation}
+Using \cref{eq:extended-public-key}, one can see that when \(i = n - k - 1\),
+\[
+  \dim \Lambda_{n - k - 1}(\mathcal{C}_{\pub}) = n - 1 + \rank \mat{X}^{**}\text.
+\]
+When \(\rank \mat{X}^{**} = l\),
+\(\dim \Lambda_{n - k - 1}(\mathcal{C}_{\pub}) = n + l - 1\), and thus
+\(\dim {\Lambda_{n - k - 1}(\mathcal{C}_{\pub})}^{\perp} = 1\).  If
+\(\vec{h} \in {\Gab_{n - 1}(\vec{g})}^{\perp}\) is a nonzero vector, and we set
+\(\vec{h}^* = \begin{bmatrix} \vec{0} & \vec{h} \end{bmatrix} {(\mat{P}^{-1})}^{\trans}\),
+then\--- under the assumption that \(\rank \mat{X}^{**} = l\)\--- we have
+\begin{equation}\label{eq:spanning-the-dual}
+  {\Lambda_{n - k - 1}(\mathcal{C}_{\pub})}^{\perp} = \lspan\{\vec{h}^*\}.
+\end{equation}
+
+\begin{theorem}
+  Let \(\vec{v} \in {\Lambda_{n - k - 1}(\mathcal{C}_{\pub})}^{\perp}\) be a
+  nonzero vector.  Any matrix \(\mat{T} \in \GL_{l + n}(\FF_q)\) that satisfies
+  \(\vec{v} \mat{T} = \begin{bmatrix} \vec{0} & \vec{h}' \end{bmatrix}\) with
+  \(\vec{h}' \in \FF_{q^m}^n\) is an alternative column scrambler; i.e., there
+  exist \(\mat{Z} \in \FF_{q^m}^{k \times l}\) and \(\mat{G}^*\) generating
+  \(\Gab_k(\vec{g}^*)\) such that
+  \[
+    \mat{G}_{\pub} = \mat{S} \begin{bmatrix} \mat{Z} & \mat{G}^* \end{bmatrix} \mat{T}\text.
+  \]
+  \begin{proof}
+    From \cref{eq:spanning-the-dual}, there exists \(\alpha \in \FF_{q^m}\) such
+    that
+    \(\vec{v} = \alpha \vec{h}^* = \begin{bmatrix} \vec{0} & \alpha \vec{h} \end{bmatrix} {(\mat{P}^{-1})}^{\trans}\),
+    where \(\vec{h} \in {\Gab_{n - 1}(\vec{g})}^{\perp}\) is a nonzero vector.
+    Let \(\mat{T} \in \GL_{l + n}(\FF_q)\) be such that
+    \(\vec{v} \mat{T}^{\trans} = \begin{bmatrix} \vec{0} & \vec{h}' \end{bmatrix}\),
+    and consider the matrices \(\mat{A} \in \FF_q^{l \times l}\) and
+    \(\mat{D} \in \FF_q^{n \times n}\) so that
+    \[
+      \mat{T} \mat{P}^{-1} =
+      \begin{bmatrix}
+        \mat{A} & \mat{B} \\
+        \mat{C} & \mat{D}
+      \end{bmatrix}\text.
+    \]
+    Now, we have
+    \[
+      \vec{v} \mat{T}^{\trans} =
+      \begin{bmatrix} \vec{0} & \alpha \vec{h} \end{bmatrix}
+      {(\mat{P}^{-1})}^{\trans} \mat{T}^{\trans} =
+      \begin{bmatrix} \vec{0} & \alpha \vec{h} \end{bmatrix}
+      {(\mat{P}^{-1} \mat{T})}^{\trans} =
+      \begin{bmatrix} \vec{0} & \vec{h}' \end{bmatrix}\text.
+    \]
+    Notice that
+    \(\vec{h} \mat{B}^{\trans} = \vec{0} \implies \mat{B} = \mat{0}\) since
+    \(\normR{\vec{h}}{q} = n\).  Thus,
+    \[
+      \mat{T} \mat{P}^{-1} =
+      \begin{bmatrix} \mat{A} & \mat{0} \\ \mat{C} & \mat{D} \end{bmatrix}
+      \implies
+      \mat{P} \mat{T}^{-1} =
+      \begin{bmatrix} \mat{A}' & \mat{0} \\ \mat{C}' & \mat{D}' \end{bmatrix}\text.
+    \]
+    From here,
+    \[
+      \mat{G}_{\pub} \mat{T}^{-1} =
+      \mat{S}
+      \begin{bmatrix} \mat{X} & \mat{G} \end{bmatrix}
+      \begin{bmatrix} \mat{A}' & \mat{0} \\ \mat{C}' & \mat{D}' \end{bmatrix} =
+      \mat{S}
+      \begin{bmatrix} \mat{Z} & \mat{G}^* \end{bmatrix}\text,
+    \]
+    where \(\mat{G}^* \coloneqq \mat{G} \mat{D}'\) is a generator matrix of an
+    \([n, k]\)\=/Gabidulin code.
+  \end{proof}
+\end{theorem}
+
+\section{Defending Against Overbeck's Attack}
+
+As we saw, Overbeck's attack is quite general as it can be applied to a wide
+variety of GPT\=/like cryptosystems.  In order to defend against it, we need to
+see what makes it feasible to perform the attack.  There are two key properties:
+\begin{properties}
+\item\label{prop:column-scrambler} The column scrambler \(\mat{P}\) is defined
+  over the base field; and
+\item\label{prop:codimension} The codimension of
+  \(\Lambda_{n - k - 1}(\mathcal{C})\) is \(1\).
+\end{properties}
+Here, we focus on \cref{prop:column-scrambler}.  We can relax the optimality of
+the code by scrambling the columns with a nonisometry of the metric.  This was
+already done in the Hamming metric in the case of GRS codes.
+
+\begin{lemma}\label{lem:rank-multiplication}
+  Let \(\mathcal{V} = \{\beta_1, \ldots, \beta_{\lambda}\}\) be the
+  \(\FF_q\)\=/linear subspace generated by
+  \(\{\beta_1, \ldots, \beta_{\lambda}\}\).  Let
+  \(\mat{P} \in \GL_n(\mathcal{V})\).  Then,
+  \[
+    \forall \vec{x} \in \FF_{q^m}^n\ldotp
+    \normR{\vec{x} \mat{P}}{q} \le \lambda \normR{\vec{x}}{q}\text.
+  \]
+\end{lemma}
+
+\begin{corollary}
+  Let \(\mathcal{C}\) be an \([n, k, d]\)\=/Gabidulin code over \(\FF_{q^m}\).
+  Let \(\mathcal{V}\) be a \(\lambda\)\=/dimensional subspace of \(\FF_{q^m}\),
+  and let \(\mat{P} \in \GL_n(\mathcal{V})\).  Then,
+  \[
+    \mathcal{C} \mat{P}^{-1} \coloneqq \{\vec{c} \mat{P}^{-1} : \vec{c} \in \mathcal{C}\}
+  \]
+  has dimension \(k\) and minimum distance \(d' \ge \floor{c / {\lambda}}\).
+  \begin{proof}
+    Since \(\mat{P}\) is nonsingular, \(\mathcal{C}\) and
+    \(\mathcal{C} \mat{P}^{-1}\) have the same dimension.  Now, suppose
+    \(d' < d / {\lambda}\), and let \(\vec{c} \in \mathcal{C} \mat{P}^{-1}\) be
+    a nonzero vector with \(\normR{\vec{c}}{q} = d'\).  By construction,
+    \(\vec{c} \vec{P} \in \mathcal{C}\), and by \cref{lem:rank-multiplication},
+    \(\normR{\vec{c} \mat{P}}{q} \le d' \lambda < d \implies \vec{c} \mat{P} = \vec{0}\).
+    Thus, \(\vec{c} = \vec{0}\), which contradicts the hypothesis.
+  \end{proof}
+\end{corollary}
+
+We can use this property to design a cryptosystem where the column scrambler
+\(\mat{P}\) is defined over the extension field.
+
+\section{Reparation by \texorpdfstring{\textcite{Loi17}}{Loidreau}}
+
+\Textcite{Loi17} proposed and analyzed the security of a cryptosystem based on
+the aforementioned ideas.  What follows is a description of the system and the
+parameters proposed by the author.
+
+\paragraph{Private key}
+\begin{enumerate}
+\item Gabidulin code \(\Gab_k(\vec{g})\) with \(\normR{\vec{g}}{q} = n\),
+  generator matrix \(\mat{G}\) as in \cref{eq:gabidulin-code-generator}, and
+  error\-/correction capacity \(t \coloneqq \floor{(n - k) / {2}}\).
+\item \(\mat{S} \in \GL_k(\FF_{q^m})\), the \emph{row scrambler}.
+\item \(\mathcal{V}\), a \(\lambda\)\=/dimensional subspace of \(\FF_{q^m}\);
+  and \(\mat{P} \in \GL_n(\mathcal{V})\), the \emph{column scrambler}.
+\end{enumerate}
+
+\paragraph{Public key} Tuple \((\mat{G}_{\pub}, t_{\pub})\), where
+\[
+  \mat{G}_{\pub} \coloneqq
+  \mat{S} \mat{G} \mat{P}^{-1} \ \text{and}\ t_{\pub} =
+  \ceil*{\frac{n - k}{2 \lambda}}\text.
+\]
+
+\paragraph{Encryption} To encrypt a message \(\vec{x} \in \FF_{q^m}^k\), we
+choose a random error \(\vec{e} \in \FF_{q^m}^n\) with
+\(\normR{e}{q} \le t_{\pub}\) and compute the ciphertext:
+\(\vec{y} = \vec{x} \mat{G}_{\pub} + \vec{e}\).
+
+\paragraph{Decryption} Compute
+\(\vec{y} \mat{P} = \vec{x} \mat{S} \mat{G} + \vec{e} \mat{P}\).  We know that
+\[
+  \normR{\vec{e} \mat{P}}{q} \le \lambda \ceil*{\frac{n - k}{2 \lambda}} \le \ceil*{\frac{n - k}{2}}\text,
+\]
+thus, we can decode using a decoding algorithm for \(\Gab_k(\vec{g})\)
+to obtain \(\vec{x} \mat{S}\).  From here, we can retreive \(\vec{x}\)
+immediately.
+
+\section{Analysis of the Cryptosystem}
+
+Having the column scrambler defined over the extension field nullifies
+Overbeck's attack since it is no longer true that
+\[
+  \mat{P}^{[i]} = \mat{P}\text.
+\]
+As a matter of fact, there is no known reason for the public key to have any
+particular structure.  Namely, even though the entires of \(\mat{P}\) are all in
+some \(\lambda\)\=/dimensional subspace \(\mathcal{V}\), there is no reason for
+the entries of \(\mat{P}^{-1}\) to be in any subspace.  The proposed parameters
+can be found in \cref{tab:loidreau-parameters}.
+
+\begin{table}
+  \centering
+  \captionabove{Proposed parameters for the Loidreau
+    cryptosystem}\label{tab:loidreau-parameters}
+  \begin{tabular}{S[table-format=3]S[table-format=3]S[table-format=2]S[table-format=1]S[table-format=3]S[table-format=2.1]}
+    \toprule
+    {\(m\)} & {\(n\)} & {\(k\)} & {\(\lambda\)} & {Claimed security (\si{bit})} & {Key size (\si{\kilo\byte})} \\
+    \midrule
+    50 & 50 & 32 & 3 & 64 & 3.6 \\
+    80 & 80 & 11 & 3 & 110 & 8.3 \\
+    96 & 64 & 40 & 3 & 120 & 11.5 \\
+    128 & 90 & 24 & 3 & 240 & 21.5 \\
+    128 & 120 & 80 & 5 & 240 & 51 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\chapter{Information Set Decoding}\label{chap:ISD}
+
+As we saw, decoding random linear codes is a fundamental problem not only in
+coding theory, but also in cryptography.  We established that it is a
+\enquote{very hard} problem and is conjectured to be hard on average.  We saw a
+family of codes\--- Gabidulin codes\--- which can be decoded efficiently, but
+most codes are not known to have an efficient decoding algorithm.
+
+There are several known techniques for decoding random linear codes.  In the
+Hamming metric, the best algorithms that we know of rely on information set
+decoding (ISD), originally proposed by \textcite{Eli78} and inspired by the work
+of \textcite{Pra62}.  In short, the idea behind ISD is to pick a sufficiently
+large set of error\-/free positions in a received word.  Then, the information
+sequence can be obtianed by linear algebra.
+
+Since its introduction, ISD has been refined to the point of being able to
+decode random binary linear codes in the Hamming metric with complexity
+\(\mathcal{O}(2^{n / {20}})\)~\cite{B+12}.  However, ISD has not been explored
+in the context of the rank metric.  In this chapter, we introduce and analyze
+ISD algorithms suitable for the rank metric.  First, we introduce the MinRank
+problem in \cref{sec:MR-definition,sec:MR-attacks}, as it will be used as a
+subproblem is one of the ISD algorithms.
+
+\section{The MinRank Problem}\label{sec:MR-definition}
+
+\begin{definition}[MinRank over a field]\label{def:MR}
+  Let \(\KK\) be a field.  Let \(\mat{M}_0; \mat{M}_1, \ldots, \mat{M}_m\) be
+  matrices from \(\KK^{\mu \times \nu}\), and let \(r \in \NN\).  The MinRank
+  problem instance asks us to find a vector
+  \(\vec{\alpha} \coloneqq \begin{bmatrix} \alpha_1 & \cdots &
+    \alpha_m \end{bmatrix} \in \KK^m\) such that
+  \[
+    \rank\left(\sum_{i = 1}^{m} \alpha_i \mat{M}_i - \mat{M}_0\right) \le r\text.
+  \]
+  We denote by
+  \(\MR(m, \mu, \nu, r, \KK; \mat{M}_0; \mat{M}_1, \ldots, \mat{M}_m)\) the set
+  of all solutions to the problem.
+  \begin{remark}
+    Typically, \(\KK \coloneqq \FF_q\) for \(q\) (power of a) prime.  We will
+    implicitly assume this hereafter.
+  \end{remark}
+\end{definition}
+
+MinRank is known to be \NP\=/complete.  As a matter of fact, any system of
+multivariate polynomial equations can be encoded as a MinRank instance.  More
+interestingly, \textsc{Minimum Distance Decoding} in the rank metric can be
+reduced to solving a MinRank instance.
+
+\begin{theorem}\label{thm:RD-to-MR}
+  Let \(\mathcal{C}\) be an \([n, k]\)\=/code over \(\FF_{q^m}\) in the rank
+  metric.  There is a many\-/to\-/one reduction from
+  \(\MDD(\mathcal{C}, \vec{y}, w)\) to
+  \(\MR(m k, m, k, w, \FF_q; \mat{M}_0; \mat{M}_1, \ldots, \mat{M}_{m k})\).
+  \begin{proof}[Proof sketch]
+    Each entry of \(\vec{y} - \vec{c} \eqqcolon \vec{e}\) can be written in a
+    basis \(\mathcal{B} = (\vec{\beta}_1, \ldots, \vec{\beta}_m)\).  For each of
+    the \(k\) coordinates of \(\vec{c} = \vec{x} \mat{G}\), we can
+    \enquote{expand} each \(\vec{\beta}_i\) into an \(m \times k\) matrix over
+    \(\FF_q\), for a total of \(m k\) such matrices.
+  \end{proof}
+\end{theorem}
+
+\section{Solving MinRank Instances}\label{sec:MR-attacks}
+
+The two most practical and most studied methods of solving MinRank instances
+are:
+\begin{itemize}
+\item Guessing the kernel of the solution\--- the so\-/called \enquote{kernel
+    attack}; and
+\item Modeling a MinRank instance as a system of polynomial (multivariate
+  quadratic) equations.
+\end{itemize}
+
+\subsection{The Kernel Attack}\label{sec:kernel-attack}
+
+This was the first non-trivial attack against MinRank and was proposed by
+\textcite{GC00}.  The main idea is that instead of guessing \(\vec{\alpha}\), we
+can guess the kernel of the resulting matrix.  Then, assuming that the kernel
+was guessed correctly, we can \emph{solve} for \(\vec{\alpha}\).
+
+For some parameter \(\vec{\beta} \in \FF_q^m\), denote by \(H(\vec{\beta})\) the
+linear combination
+\[
+  \sum_{i=1}^m \beta_i \mat{M}_i - \mat{M}_0\text.
+\]
+We would like to have \(\rank H(\vec{\beta}) \le r\), i.e., \(\vec{\beta}\) to
+be a solution.  If that were the case, then by the rank\-/nullity theorem of
+linear algebra, we would have \(\dim \ker H(\vec{\beta}) \ge \nu - r\).
+
+We can proceed by randomly choosing $\kappa$ vectors
+\(\vec{x}^{(i)} \in \FF_q^{\nu}\) for \(\ 1 \le i \le \kappa\).  If these
+vectors are such that they all fall into the kernel of a solution to the MinRank
+instance, then solving for \(\vec{\beta}\) in
+\begin{equation}\label{eq:kernel-attack}
+  \setlength{\arraycolsep}{0pt}
+  \newcolumntype{B}{>{{}}c<{{}}}
+  \left\{
+    \begin{array}{l B l}
+      H(\vec{\beta}) \vec{x}^{(1)} & = & \vec{0} \\
+      H(\vec{\beta}) \vec{x}^{(2)} & = & \vec{0} \\
+                                   & \vdots & \\
+      H(\vec{\beta}) \vec{x}^{(\kappa)} & = & \vec{0}
+    \end{array}
+  \right.
+\end{equation}
+would allow us to retrieve the correct solution.  \Cref{eq:kernel-attack} is a
+system in \(\kappa \mu\) equations and \(m\) unknowns.  Since we would like
+\cref{eq:kernel-attack} to never be under\-/determined and have its numbers of
+equations and unknowns match as closely as possible, we can choose
+\(\kappa \coloneqq \ceil{m / {\mu}}\).
+
+It was established that there are at least \(q^{\nu - r}\) vectors in
+\(\ker H(\vec{\beta})\) whenever \(\vec{\beta}\) is a solution.  Having that in
+mind, we can see that
+\[
+  \Pr(\{\vec{x}^{(1)}, \ldots, \vec{x}^{(\kappa)}\} \subseteq \ker H(\vec{\beta})) \ge q^{-\kappa r} = q^{-\ceil{m / {\mu}} r}\text.
+\]
+From here, we get an overall complexity of
+\(\mathcal{O}(m {(\ceil{m / {\mu}} \mu)}^2 q^{\ceil{m / {\mu}} r})\).  The
+takeaway is that the kernel attack is significantly better than a brute\-/force
+enumeration whenever \(\ceil{m / {\mu}} r \ll m\), which is almost always the
+case.
+
+\subsection{As a System of Multivariate Quadratic Equations}
+
+Notice that instead of guessing, we can explicitly construct the kernel's
+solution, i.e., treat the \(\vec{x}^{(i)}\) in \cref{eq:kernel-attack} as
+unknowns.  This modeling was first proposed by \textcite{KS99}.
+
+Define \(H(\vec{\beta})\) as in \cref{sec:kernel-attack}.  We already saw that
+whenever \(\vec{\beta}\) is a solution, there are at least \(\nu - r\) linearly
+independent vectors in \(\ker H(\vec{\beta})\).  Proceed by trying to fix these
+vectors as follows:
+\begin{equation}\label{eq:MR-fixed-vectors}
+  \setlength{\savedcolsep}{\arraycolsep}
+  \setlength{\arraycolsep}{0pt}
+  \newcolumntype{B}{>{{}}c<{{}}}
+  \begin{array}{l B l}
+    \vec{x}^{(1)} & \coloneqq
+    & \setlength{\arraycolsep}{\savedcolsep}%
+      \begin{bmatrix} 1 & 0 & \cdots & 0 & x^{(1)}_1 & \cdots & x^{(1)}_r \end{bmatrix}^{\trans}
+    \\
+                  & \vdots &
+    \\
+    \vec{x}^{(\nu - r)}
+                  & \coloneqq
+    & \setlength{\arraycolsep}{\savedcolsep}%
+      \begin{bmatrix} 0 & 0 & \cdots & 1 & x^{(\nu - r)}_1 & \cdots & x^{(\nu - r)}_r \end{bmatrix}^{\trans}\text.
+  \end{array}
+\end{equation}
+\begin{remark}
+  \Cref{eq:MR-fixed-vectors} is true up to a \emph{change of basis}, so it might
+  happen that it does not arrive at a solution.
+\end{remark}
+
+Bearing this in mind, one can see that the multivariate quadratic (MQ) system
+\begin{equation}\label{eq:MR-as-MQ}
+  \left(\sum_{i = 1}^m \beta_i \mat{M}_i - \mat{M}_0\right)
+  \begin{bmatrix}
+    1 & 0 & \cdots & 0 \\
+    0 & 1 & \cdots & 0 \\
+    \vdots & \vdots & \ddots & \vdots \\
+    0 & 0 & \cdots & 1 \\
+    x^{(1)}_1 & x^{(2)}_1 & \cdots & x^{(n - r)}_1 \\
+    \vdots & \vdots & \ddots & \vdots \\
+    x^{(1)}_r & x^{(2)}_r & \cdots & x^{(n - r)}_r
+  \end{bmatrix} = \mat{0}_{\mu \times (\nu - r)}
+\end{equation}
+over \(\FF_q[\beta_1, \ldots, \beta_m, x^{(1)}_1, \ldots, x^{(\nu - r)}_r]\)
+consists of \(\mu (\nu - r)\) equations and \(r (\nu - r) + \mu\) unknowns.  The
+complexity of solving \cref{eq:MR-as-MQ} is hard to evaluate and depends a lot
+on the method.  Nevertheless, it is exponential in the worst case.
+
+\Textcite{KS99} proposed solving \cref{eq:MR-as-MQ} by \emph{relinearization}.
+However, Gröbner bases are a more popular approach for solving any system of
+polynomial equations.  One can think of them as analogous to the process of
+Gaussian elimination.
+
+\paragraph{Solving \cref{eq:MR-as-MQ} by Gröbner bases} \Textcite{FLP08}
+proposed a one\-/to\-/one correspondence between the affine variety
+\[
+  \mathcal{V}(\mathcal{I}_{\KS}) \coloneqq
+  \{\vec{x} \in \FF_q^{r (\nu - r) + m} : \forall f \in \mathcal{I}_{\KS}\ldotp f(\vec{x}) = 0\}
+\]
+and the solution to \cref{eq:MR-as-MQ}, where \(\mathcal{I}_{\KS}\) is the ideal
+generated by the equations of \cref{eq:MR-as-MQ}.  This allows one to use
+Gröbner bases to solve the system.  The theoretical complexity of computing a
+Gröbner basis of a polynomial system with \(m\) equations and \(n\) unknowns is
+given by
+\[
+  \mathcal{O}\left(m \binom{n + d_{\reg}}{d_{\reg}}^{\omega}\right)\text,
+\]
+where \(d_{\reg}\) is the degree of regularity (i.e., the highest degree reached
+during the computation), and \(2 \le \omega \le 3\) is the exponent in the
+complexity of matrix multiplication.  However, in practice\--- and especially
+for MinRank instances since the equations of \cref{eq:MR-as-MQ} are bilinear\---
+the complexity is much lower~\cite{FLP08} and can often be experimentally
+bounded by a polynomial.
+
+\section{The Information Set Decoding Algorithms}
+
+In this section, we formulate and analyze two variants of information set
+decoding algorithms suitable for decoding in the rank metric:
+\begin{enumerate*}[label={(\arabic*)}]
+\item algorithms using sets of coordinates (\cref{sec:ISD-R-SC}); and
+\item algorithms using projections onto subspaces (\cref{sec:ISD-R-P}).
+\end{enumerate*}
+The former are a straightforward adaptation of the algorithms in the Hamming
+metric, while the latter use projections as the \enquote{rank metric analog}
+for sets of coordinates.
+
+\subsection{Algorithms in the Hamming Metric}\label{sec:ISD-H}
+
+All information set decoding algorithms studied in this thesis can be described
+in two steps:
+\begin{steps}
+\item\label{stp:ISD-1} Choosing a random information set and assuming it
+  satisfies certain condition w.r.t.\ the error pattern; and
+\item\label{stp:ISD-2} Decoding the received word \(\vec{y}\) assuming that the
+  information set chosen in \cref{stp:ISD-1} is as assumed.
+\end{steps}
+
+In this section, we are going to restrict our attention to \emph{binary} codes
+in the Hamming metric.  The definition of an information set
+(\cref{def:information-set}) immediately lends itself to the simplest ISD
+algorithm, \emph{plain information set decoding} (\PISD).
+
+\emph{Plain information set decoding} randomly chooses an information set and
+then computes the information by solving linear equations.  In other words, it
+assumes that there are \emph{no errors} within the \(k\) positions indexed by
+the information set.  Let \(\vec{x} \in \FF_2^k\) be the unknown message, and
+\[
+  \vec{y} \coloneqq \vec{x} \mat{G} + \vec{e} \in \FF_2^n
+\]
+be the received word.  Suppose we pick an information set
+\(\mathcal{I} \subset \{1, \ldots, n\}\) with \(\card{\mathcal{I}} = k\).  If
+the \(\mathcal{I}\)\=/indexed coordinates of \(\vec{y}\) are error\-/free,
+i.e., if \(\vec{e}_{\mathcal{I}} = \vec{0}\), then we can compute \(\vec{x}\)
+by simple linear algebra:
+\[
+  \vec{y}_{\mathcal{I}} \mat{G}_{\mathcal{I}}^{-1} =
+  ({(\vec{x} \mat{G})}_{\mathcal{I}} + \vec{e}_{\mathcal{I}}) \mat{G}_{\mathcal{I}}^{-1} =
+  \vec{x}\text.
+\]
+This idea originated from \textcite{Pra62}.  In order to analyze the complexity
+of the algorithm, we need to determine the probability of success, i.e., picking
+an error\-/free information set, and the complexity of computing \(\vec{x}\).
+
+
+Denote by \(\supp(\vec{e})\) the set of all coordinates of the nonzero entries
+of \(\vec{e}\), \(\supp(\vec{e}) = \{i : e_i \ne 0\}\).  Then, the probability
+of success is
+\[
+  \Pr(\mathcal{I} \cap \supp(\vec{e}) = \emptyset) = \binom{n - k}{w}\binom{n}{w}^{-1}\text,
+\]
+where \(w\) is the Hamming weight of \(\vec{e}\).  To see that this is the case,
+notice that there are \(\binom{n - k}{w}\) possible choices for \(\vec{e}\) if
+the information set is to be error\-/free; whereas there are \(\binom{n}{w}\)
+choices if this restriction is lifted.  The cost of decoding \(\vec{y}\) is
+simply the cost of computing the inverse of a matrix by Gaussian elimination.
+It is common to consider it as \(\frac{(n - k) k^2}{2}\), although significant
+improvements are known.
+
+The algorithm performs a series of independent iterations, where each iteration
+consists of a randomly chosen information set \(\mathcal{I}\).  As justified by
+\cref{thm:las-vegas-running-time}, the expected running time is
+\[
+  \binom{n - k}{w}^{-1}\binom{n}{w}\text.
+\]
+
+\begin{theorem}\label{thm:las-vegas-running-time}
+  Consider a Las Vegas algorithm which succeeds to produce a correct answer with
+  probability \(\rho\) and outputs \(\bot\) with probability \(1 - \rho\).  Let
+  \(X\) be a random variable that represents the running time of the algorithm.
+  Then, its expected running time is
+  \[
+    \E[X] = \frac{1}{p}\text.
+  \]
+  \begin{proof}
+    Since we will run the algorithm until we observe a correct answer, \(X\)
+    follows a geometric distribution.  More specifically, the probability that
+    we have to run the algorithm \(i\) times is given by
+    \[
+      \Pr(X = i) = \rho {(1 - \rho)}^{i - 1}\text.
+    \]
+    It is a well\-/known result that a random variable with such a distribution
+    has expectation equal to \(1 / {\rho}\).
+  \end{proof}
+\end{theorem}
+
+\Textcite{LB88} explored a generalization of plain information set decoding,
+allowing a set of \(p \in \{0, \ldots, w\}\) errors in the information set.
+The parameter \(p\) is typically chosen to be a small number; \textcite{Pet11}
+proved that \(p = 2\) is in fact optimal in the binary case, improving the
+complexity by a factor \(\Theta(n \log n)\) over plain information set decoding
+(\(p = 0\)).  Assuming that \(\vec{e}\) is uniformly random, the probability of
+having exactly \(p\) errors in the information set is
+\[
+  \Pr(\card{\mathcal{I} \cap \supp(\vec{e})} = p) =
+  \binom{n - k}{w - p}\binom{k}{p}\binom{n}{w}^{-1}\text,
+\]
+which also gives the probability of success in one iteration of the
+Lee\--Brickell algorithm.
+
+\subsection{Algorithms Using Sets of Coordinates in the Rank
+  Metric}\label{sec:ISD-R-SC}
+
+The algorithms outlined in \cref{sec:ISD-H} employ the \enquote{classical}
+definition of an information set (\cref{def:information-set}).  As we already
+mentioned, they have been the most successful way of attacking McEliece\-/like
+cryptosystems, but have not been explored in the context of the rank metric.  We
+formulate both plain information set decoding and the improvement by
+\textcite{LB88}, and analyze their applicability in the rank metric.  We also
+provide some thoughts on the feasibility applying Stern's and Dumer's
+ideas~\cite{Ste89, Dum96}.
+
+\subsubsection{Plain Information Set Decoding}
+
+We saw that \PISD{} randomly chooses an information set and assumes that the
+error indexed by it is of weight \(0\).  This is a very natural notion for the
+Hamming metric; however, for the rank metric, it translates to the submatrix
+formed by the \(\mathcal{I}\)\=/indexed coordinates being the zero matrix.
+\Cref{alg:P-ISD-R-SC} summarizes the procedure.
+
+\begin{algorithm}
+  \caption{\PISD{} using sets of coordinates in the rank
+    metric}\label{alg:P-ISD-R-SC}
+  \DontPrintSemicolon{}%
+  \KwIn{Generator matrix \(\mat{G} \in \FF_{q^m}^{k \times n}\), received word
+    \(\vec{y} \in \FF_q^n\), and target weight \(w \in \NN\)}%
+  \KwOut{Error \(\vec{e} \in \FF_q^n\) with \(\normR{\vec{e}}{q} \le w\) and
+    \(\vec{y} - \vec{e} \in \mathcal{C}\)}%
+  \Begin{%
+    \Repeat{a solution is found}{%
+      \(\mathcal{I} \sample \{1, \ldots, n\}\) with
+      \(\card{\mathcal{I}} = k\)\;%
+      \(\vec{e}' \gets
+      \vec{y} - \vec{y}_{\mathcal{I}} \mat{G}_{\mathcal{I}}^{-1} \mat{G}\)\;%
+      \lIf{\(\normR{\vec{e}'}{q} \le w\)}{\Return{\(\vec{e}'\)}}%
+    }%
+  }
+\end{algorithm}
+
+Subsequent experiments will show that this algorithm is not applicable to the
+rank metric.  Indeed, there is just a single matrix of rank \(0\) (the zero
+matrix), and the probability of the \(\mathcal{I}\)\=/indexed coordinates of
+\(\vec{e}\) being the zero matrix becomes negligible even for small parameters.
+
+\subsubsection{Improvement by \texorpdfstring{\textcite{LB88}}{Lee and
+    Brickell}}
+
+As discussed in \cref{sec:ISD-H}, \textcite{LB88} published a variation of
+\PISD{} (called \LBISD{} hereafter), by allowing \(p \in \{0, \ldots, w\}\)
+errors within the information set.  These \(p\) errors are then decoded by
+brute\-/force enumeration.  In the Hamming metric, this is equivalent to
+iterating over all words in a Hamming sphere of radius \(p\).  However, in the
+rank metric, we are presented with two options:
+\begin{enumerate}
+\item Iterate over rank\=/\(p\) matrices; or
+\item Iterate over \(p\)\=/dimensional subspaces and solve a MinRank\-/like
+  subproblem.
+\end{enumerate}
+We will see that the second option is the more favorable one.
+\Cref{alg:LB-ISD-R-SC} shows the procedure.  Evidently, the case of \(p = 0\)
+corresponds directly to \PISD\@.
+
+\begin{algorithm}
+  \caption{\LBISD{} using sets of coordinates in the rank
+    metric}\label{alg:LB-ISD-R-SC}
+  \DontPrintSemicolon{}%
+  \LinesNumberedHidden{}%
+  \KwIn{Generator matrix \(\mat{G} \in \FF_{q^m}^{k \times n}\), received word
+    \(\vec{y} \in \FF_{q^m}^n\), target weight \(w \in \NN\), and parameter
+    \(p \in \NN\) with \(p \le w\)}%
+  \KwOut{Error \(\vec{e} \in \FF_{q^m}^n\) with \(\normR{\vec{e}}{q} \le w\)
+    and \(\vec{y} - \vec{e} \in \mathcal{C}\)}%
+  \Begin{%
+    \Repeat{a solution is found}{%
+      \(\mathcal{I} \sample \{1, \ldots, n\}\) with \(\card{\mathcal{I}} = k\)\;%
+      \(\vec{e}' \gets
+      \vec{y} - \vec{y}_{\mathcal{I}} \mat{G}_{\mathcal{I}}^{-1} \mat{G}\)\;%
+      \ForAll{\(\mathcal{V} \le \FF_q^m\) with \(\dim \mathcal{V} = p\)}{%
+        \(\basis{\vec{\beta}_1, \ldots, \vec{\beta}_p} \gets\) basis of
+        \(\mathcal{V}\)\;%
+        \(\vec{e}'' \coloneqq
+        \begin{bmatrix} e''_1 & \cdots & e''_k \end{bmatrix}
+        \mat{G}_{\mathcal{I}}^{-1} \mat{G}\)\;%
+        \(e''_j \coloneqq \sum_{l = 1}^p a_{j, l} \vec{\beta}_l\)%
+        \tcc*[r]{the \(a_{j, l}\)'s are unknowns}%
+        \ShowLnLabel{alg:MR-subproblem}%
+        \uIf{\(\exists(\)assignment to the
+          \(a_{j, l}\)'s\()\ldotp \normR{\vec{e}' - \vec{e}''}{q} \le w\)}{%
+          \Return{\((\vec{e}' - \vec{e}'')\) with the \(a_{j, l}\)'s
+            substituted}%
+        }%
+      }%
+    }%
+  }
+\end{algorithm}
+
+Given a guess for \(\mathcal{V}\), the subproblem on \autoref{alg:MR-subproblem}
+can be formulated as a MinRank instance using the idea outlined in the proof of
+\cref{thm:RD-to-MR}.  The set of solutions to the subproblem is
+\(\MR(k p, m, n, p, \FF_q; \vec{e}'; \mat{\Beta}_{1, 1}, \ldots, \mat{\Beta}_{k, p})\),
+where
+\[
+  \mat{\Beta}_{j, l} \coloneqq
+  \begin{bmatrix} \mat{0}_{m \times (k - j - 1)} & \vec{\beta}_l^{\trans} & \vec{0}_{m \times j} \end{bmatrix}\text.
+\]
+
+More formally, consider \(\vec{e}''\) written as a matrix over \(\FF_q\):
+\begin{align*}
+  \vec{e}'' &=
+  \begin{bmatrix}
+    \sum_{l = 1}^{p} a_{1, l} \vec{\beta}_l & \cdots & \sum_{l = 1}^{p} a_{k, l} \vec{\beta}_l
+  \end{bmatrix}\\
+            &= \sum_{j = 1}^k \sum_{l = 1}^p a_{j, l} \mat{\Beta}_{j, l}\text,
+\end{align*}
+with \(\mat{\Beta}_{j, l}\) as given above.  This, along with the fact that we
+can take \(\vec{e}'\) as our \enquote{base} matrix (\(\mat{M}_0\) in
+\cref{def:MR}) leads to the MinRank instance above.
+
+The set of solutions can be retrieved in time
+\(\mathcal{O}(k p {(\ceil{k p / {m}} m)}^2 q^{\ceil{k p / {m}} p})\) using the
+kernel attack (\cref{sec:kernel-attack}).  In order to fully evaluate the
+complexity of \cref{alg:LB-ISD-R-SC}, we need to determine the probability of a
+successful iteration.  This probability is formally defined in
+\cref{def:submatrix-rank-distribution}.
+
+\begin{definition}[Probability of submatrix having given
+  rank]\label{def:submatrix-rank-distribution}
+  Let \(\mat{X} \in \FF_q^{m \times n}\) be a matrix with \(\rank \mat{X} = w\).
+  Given a set of coordinates \(\mathcal{I} \subset \{1, \ldots, n\}\) with
+  \(\card{\mathcal{I}} = k \le n\), what is the probability that
+  \(\rank \mat{X}_{\mathcal{I}} = p\)?  We denote this probability by
+  \[
+    p_{\LB}(p; m, n, k, \FF_q, w)\text.
+  \]
+  \begin{remark}
+    Note that a solution for \(p_{\LB}(p; m, n, k, \FF_q, w)\) would have to
+    average over all possible inputs.  As an example, consider the two matrices
+    \[
+      \begin{bmatrix}
+        1 & 0 & 0 & 1 \\
+        0 & 1 & 0 & 1 \\
+        0 & 0 & 1 & 1
+      \end{bmatrix}\ \text{and}\
+      \begin{bmatrix}
+        1 & 0 & 0 & 0 \\
+        0 & 1 & 0 & 0 \\
+        0 & 0 & 1 & 0
+      \end{bmatrix}\text.
+    \]
+    Both matrices are of rank \(3\) \--{} however, if one were to pick a
+    \(3 \times 3\) submatrix at random, the probability that the submatrix is
+    also of rank \(3\) is higher in the first case than in the second.  This is
+    so because
+    \(\begin{bsmallmatrix} 1 & 0 & 1 \\ 0 & 1 & 1 \\ 0 & 0 & 1 \end{bsmallmatrix}\),
+    \(\begin{bsmallmatrix} 1 & 0 & 1 \\ 0 & 0 & 1 \\ 0 & 1 & 1 \end{bsmallmatrix}\),
+    \(\begin{bsmallmatrix} 0 & 1 & 1 \\ 1 & 0 & 1 \\ 0 & 0 & 1 \end{bsmallmatrix}\),
+    \(\begin{bsmallmatrix} 0 & 0 & 1 \\ 1 & 0 & 1 \\ 0 & 1 & 1 \end{bsmallmatrix}\),
+    \(\begin{bsmallmatrix} 0 & 1 & 1 \\ 0 & 0 & 1 \\ 1 & 0 & 1 \end{bsmallmatrix}\),
+    and
+    \(\begin{bsmallmatrix} 0 & 0 & 1 \\ 0 & 1 & 1 \\ 1 & 0 & 1 \end{bsmallmatrix}\)
+    are all rank\=/\(3\) submatrices of the first matrix, but are not
+    submatrices at all of the second matrix.
+  \end{remark}
+\end{definition}
+
+\Cref{tab:SMRD-empirical} shows the value of
+\(p_{\LB}(p; 32, 32, 16, \FF_2, 8)\) for different values of \(p\).  The
+probability was determined empirically by \num{6e8} simulations using
+\textsc{SageMath}.  The source code can be seen in \cref{lst:SMRD-simulation}.
+
+\begin{table}
+  \centering \captionabove{\(p_{\LB}(p; 32, 32, 16, \FF_2, 8)\) for different
+    values of \(p\)}\label{tab:SMRD-empirical}
+  \begin{tabular}{%
+    S[table-format=1]%
+    S[table-format=1.2e-1, round-integer-to-decimal, table-auto-round]%
+    }
+    \toprule
+    {\(p\)} & {\(p_{\LB}(p; 32, 32, 16, \FF_2, 8)\)} \\
+    \midrule
+    0 & 0 \\
+    1 & 0 \\
+    2 & 0 \\
+    3 & 0 \\
+    4 & 2.00000000000000e-8 \\
+    5 & 4.12666666666667e-6 \\
+    6 & 4.31678333333333e-4 \\
+    7 & 0.0294282400000000 \\
+    8 & 0.970135935000000 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Knowing that the number of subspaces of dimension \(p\) in a vector space of
+dimension \(m\) over \(\FF_q\) is given by
+\[
+  \gbinom{m}{p}_q =
+  \begin{cases}
+    \frac{%
+      (1 - q^m)(1 - q^{m - 1}) \cdots (1 - q^{m - r + 1})%
+    }{%
+      (1 - q)(1 - q^2) \cdots (1 - q^r)%
+    } & \text{if}\ p \le m \\
+    0 & \text{if}\ p > m\text,
+  \end{cases}
+\]
+we see from \cref{thm:las-vegas-running-time} that the complexity of
+\cref{alg:LB-ISD-R-SC} satisfies
+\begin{equation}\label{eq:LB-ISD-R-SC-complexity}
+  \mathcal{O}\left(
+    {p_{\LB}(p; m, n, k, \FF_q, w)}^{-1}
+    \gbinom{m}{p}_q
+    k p {(\ceil{k p / {m}} m)}^2 q^{\ceil{k p / {m}} p}
+  \right)\text.
+\end{equation}
+
+Instead of solving a MinRank subproblem on \autoref{alg:MR-subproblem} by
+iterating over all \(p\)\=/dimensional subspaces, one can iterate over all
+weight\=/\(p\)\--- i.e., rank\=/\(p\)\--- matrices \(\vec{e}''\) and check if
+\[
+  \normR{\vec{e}' - \vec{e}'' \mat{G}_{\mathcal{I}}^{-1} \mat{G}}{q} \le w
+\]
+immediately.  In order to evaluate the complexity of such a variant of the
+algorithm, we need \cref{thm:number-of-surjective-linear-transformations} and
+\cref{cor:number-of-matrices-of-given-rank}.
+
+\begin{theorem}\label{thm:number-of-surjective-linear-transformations}
+  The number of surjective linear transformations from an \(n\)\=/dimensional
+  vector space \(V_n(q)\) to an \(m\)\=/dimensional vector space over \(\FF_q\) is
+  \[
+    \sum_{k = 0}^m {(-1)}^{m - k} \gbinom{m}{k}_q q^{n k + \binom{m - k}{2}}\text.
+  \]
+  \begin{proof}
+    See~\cite[p.~338]{LW01}.
+  \end{proof}
+\end{theorem}
+
+\begin{corollary}\label{cor:number-of-matrices-of-given-rank}
+  The number of \(k \times n\) matrices over \(\FF_q\) that have rank \(p\) is
+  \[
+    N_q(k, n, p) \coloneqq
+    \gbinom{n}{p}_q \sum_{l = 0}^{p}
+    {(-1)}^{r - l} \gbinom{r}{l}_q q^{k l + \binom{r - l}{2}}\text.
+  \]
+\end{corollary}
+
+\Cref{cor:number-of-matrices-of-given-rank} implies that an algorithm which
+iterates through all rank\=/\(p\) matrices would have a complexity of
+\[
+  \mathcal{O}\left(
+    {p_{\LB}(p; m, n, k, \FF_q, w)}^{-1} N_q(m, k, p)
+  \right)\text.
+\]
+However, we found out numerically that this quantity is always larger than that
+in \cref{eq:LB-ISD-R-SC-complexity}.
+
+\subsubsection{Thoughts on the Ideas by \texorpdfstring{\textcite{Ste89,
+      Dum96}}{Stern and Dumer}}
+
+As opposed to Lee\--Brickell's algorithm which decodes \(p\) errors in the
+information set by brute force, Stern\--Dumer's algorithm partitions the
+information set into two subsets of size \(k / {2}\) each, and allows for \(p\)
+errors within either of them.  This has the effect of splitting the enumeration
+into two parts of size \(k / {2}\) each.
+
+However, the most notable improvement of Stern\--Dumer's algorithm is the
+incorporation of the idea by \textcite{Leo88} to restrict the number of
+possible candidates for the error word \(\vec{e}\) to those vectors having
+\(l \in \{0, \ldots, n - k\}\) zeroes in positions outside of the
+\(\mathcal{I}\)\=/indexed columns.  Thus, the main difference to
+Lee\--Brickell's algorithm is that Stern\--Dumer's algorithm tries to build the
+weight\=/\(w\) error word by first looking for collisions among sums of \(l\)
+columns restricted to certain positions and then checks the weight of the
+column sums arising from the collisions.
+
+Unfortunately, we already noted that the probability of having zero entries is
+overwhelmingly small when errors are chosen according to their rank weight
+rather than Hamming weight.  This makes Stern\--Dumer's algorithm unsuitable
+for the task, similarly to \PISD\@.
+
+\subsection{Algorithms Using Projections in the Rank Metric}\label{sec:ISD-R-P}
+
+In the Hamming metric, the notion of \emph{error support} is used to formally
+define the probability of success of information set decoding algorithms.  We
+saw that the error support, \(\supp(\vec{e})\), is given by the coordinates of
+the nonzero entries in \(\vec{e}\), i.e., the entries contributing to the
+overall Hamming weight.
+
+It is a well\-/known fact from linear algebra that a vector
+\(x \in \FF_{q^m}^n\) with \(\normR{\vec{x}}{q} \le p\) can be represented as
+\(\vec{x} =
+\begin{bmatrix} x_1 & \cdots & x_n \end{bmatrix} =
+\begin{bmatrix} x'_1 & \cdots & x'_p \end{bmatrix} \mat{P}\), where
+\(x'_j \in \FF_{q^m}\) and \(\mat{P}\) is a \(p \times n\) matrix over
+\(\FF_q\) of full rank.  The concept of \emph{elementary linear subspaces} can
+be introduced as a consequence of this representation.
+
+\begin{definition}[Elementary linear subspace]
+  A subspace \(\mathcal{V} \le \FF_{q^m}^n\) is said to be \emph{elementary} if
+  it has a basis \(\Beta\) consisting of row vectors in \(\FF_q^n\).  \(\Beta\)
+  is called an elementary basis of \(\mathcal{V}\).  For \(0 \le v \le n\), we
+  define \(E_p(q^m, n)\) as the set of all ELS's with dimension \(p\) in
+  \(\FF_{q^m}^n\).
+\end{definition}
+
+\Textcite{GY08} formally defined this concept and showed the connection between
+\emph{sets of coordinates} in the Hamming metric and \emph{elementary linear
+  subspaces} in the rank metric.  Following the notion of elementary linear
+subspaces, we can define \(\supp(\vec{e})\) in the rank metric to be the
+\(\FF_q\)\=/linear subspace of \(\FF_q^m\) spanned by the columns of
+\(\vec{e}\).  Now, what we would like to do is project the columns of
+\(\vec{e}\) onto a subspace that we hope would be orthogonal or
+\enquote{near\-/orthogonal} to \(\supp(\vec{e})\).  This is highly desired
+because projecting the problem onto such a subspace would have the effect of
+eliminating \(\vec{e}\) from the picture.  The subsequent algorithms have this
+idea at their core.
+
+\subsubsection{Plain Information Set Decoding}
+
+Informally, we are interested in choosing a subspace of \(\FF_q^m\) would:
+\begin{conditions}
+\item\label{cond:orthogonality} Be orthogonal or \enquote{near\-/orthogonal} to
+  \(\supp(\vec{e})\); and
+\item\label{cond:determinedness} Allow us to solve for the message
+  \(\vec{x} \in \FF_{q^m}^k\).
+\end{conditions}
+
+We know that\--- in full generality\--- \(e_i \in \FF_q^m\) for all
+\(1 \le i \le n\).  Let \(\mathcal{V}\) be a \(\zeta\)\=/dimensional subspace
+of \(\FF_q^m\).  Now, assume that it is also true that
+\(e_i \in \mathcal{V}^{\perp}\) for all \(1 \le i \le n\).  (In other words,
+\(\mathcal{V}\) satisfies \cref{cond:orthogonality}.)  We can write
+\begin{equation}\label{eq:P-ISD-R-P-system}
+  \setlength{\arraycolsep}{0pt}
+  \newcolumntype{B}{>{{}}c<{{}}}
+  \left\{
+    \begin{array}{l B l}
+      \mat{P} (y_1 - {(\vec{x} \mat{G})}_1) & = & \vec{0} \\
+      \mat{P} (y_2 - {(\vec{x} \mat{G})}_2) & = & \vec{0} \\
+                                            & \vdots & \\
+      \mat{P} (y_n - {(\vec{x} \mat{G})}_n) & = & \vec{0}\text,
+    \end{array}
+  \right.
+\end{equation}
+where \(\mat{P}\) is a \(\zeta \times m\) full\-/rank which projects from
+\(\FF_q^m\) onto \(\mathcal{V}\), and \(\vec{x}\) is a \enquote{matrix} of
+\(m k\) unknowns \--{}
+\(x_{1, 1}, \ldots, x_{m, 1}, \ldots, x_{1, k}, \ldots, x_{m, k} \in \FF_{q}\).
+When looked as a linear system over \(\FF_q\), \cref{eq:P-ISD-R-P-system} is a
+system of \(\zeta n\) equations in \(m k\) unknowns.  Since we would like these
+numbers to be as close as possible but avoid the case of having more unknowns
+than equations, we take \(\zeta \coloneqq \ceil{m k / {n}}\).  In other words,
+taking \(\zeta \coloneqq \ceil{m k / {n}}\) allows us to satisfy
+\cref{cond:determinedness} simultaneously.
+
+It is instructional to compare this approach to the kernel attack on MinRank
+(\cref{sec:kernel-attack}).  In the kernel attack, we are given the
+right\-/hand side of each equality of \cref{eq:kernel-attack} and are solving
+for the left\-/hand side; here, we are given the left\-/hand side of each
+equality of \cref{eq:P-ISD-R-P-system} and are solving for the right\-/hand
+side.  We can translate this idea to an algorithm in a straightforward manner,
+\cref{alg:P-ISD-R-P}.
+
+\begin{algorithm}
+  \caption{\PISD{} using projections in the rank metric}\label{alg:P-ISD-R-P}
+  \DontPrintSemicolon{}%
+  \LinesNumberedHidden{}%
+  \KwIn{Generator matrix \(\mat{G} \in \FF_{q^m}^{k \times n}\), received word
+    \(\vec{y} \in \FF_q^n\), and target weight \(w \in \NN\)}%
+  \KwOut{Error \(\vec{e} \in \FF_q^n\) with \(\norm{\vec{e}} \le w\) and
+    \(\vec{y} - \vec{e} \in \mathcal{C}\)}%
+  \Begin{%
+    \(\zeta \gets \ceil*{\frac{m k}{n}}\)\;%
+    \(\vec{x} \coloneqq \begin{bmatrix} x_1 & \cdots & x_k \end{bmatrix}\) with
+    \(x_j \in \FF_q^m\)\;%
+    \(x_j \coloneqq
+    \begin{bmatrix} x_{j, 1} & \cdots & x_{j, m} \end{bmatrix}^{\trans}\)
+    with \(x_{j, l} \in \FF_q\)\;%
+    \ShowLnLabel{alg:number-of-iterations}%
+    \Repeat{sufficiently many iterations have been performed}{%
+      \(\mathcal{V} \gets\) random \(\zeta\)\=/dimensional subspace of
+      \(\FF_q^m\)\;%
+      \(\mat{P} \gets\) \(\zeta \times m\) matrix that projects from
+      \(\FF_q^m\) to \(\mathcal{V}\)\;%
+      solve for \(\vec{x}\) in
+      \(\{\mat{P} (y_i - {(\vec{x} \mat{G})}_i) = \vec{0} : \forall 1 \le i \le
+      n\}\)\;%
+      \ForAll{solutions for \(\vec{x}\)}{%
+        \(\vec{e} \gets \vec{y} - \vec{x} \mat{G}\) with the appropriate values
+        substituted in for \(\vec{x}\)\;%
+        \lIf{\(\normR{\vec{e}}{q} \le w\)}{\Return{\(\vec{e}\)}%
+        }%
+      }%
+    }%
+  }
+\end{algorithm}
+
+Analyzing the complexity of \cref{alg:P-ISD-R-P} requires us to define what
+\enquote{sufficiently many iterations} on \autoref{alg:number-of-iterations}
+means.  We know that there are \(\gbinom{m}{w}_q\) possibilities for
+\(\supp(\vec{e})\) in the general case.  On the other hand, there are
+\(\gbinom{m - \zeta}{w}_q\) subspaces satisfying \cref{cond:orthogonality}.
+(Recall that \cref{cond:determinedness} is satisfied by the choice of
+\(\zeta\).)  This implies that the probability of a successful iteration is
+\[
+  \gbinom{m - \zeta}{w}_q \gbinom{m}{w}_q^{-1}\text;
+\]
+which, in turn, means that on average
+\[
+  \gbinom{m - \zeta}{w}_q^{-1} \gbinom{m}{w}_q
+\]
+iterations have to be performed (\cref{thm:las-vegas-running-time}).  Solving
+for \(\vec{x}\) can be done in time polynomial in the inputs to the algorithm,
+as it is a simple linear system over \(\FF_q\).
+
+\subsubsection{The Lee\--Brickell Algorithm}
+
+Bearing in mind the notion of \(\supp(\vec{e})\), we can adapt the idea of
+\textcite{LB88} from the Hamming metric to the rank metric.  Informally, we can
+allow for \(\supp(\vec{e})\) and \(\mathcal{V}\) to be
+\enquote{near\-/orthogonal}, i.e., for a \(p\)\=/dimensional intersection
+between them.  The dimension of the intersection is determined by a parameter
+\(p \in \NN\) with \(0 \le p \le w\).  \PISD{} corresponds directly to
+\(p = 0\).
+
+Allowing for a nontrivial intersection has the effect of increasing the
+probability of a successful iteration.  Namely, let
+\(\supp(\vec{e}) \cap \mathcal{V} = \tilde{\mathcal{V}}\), with
+\(\tilde{\mathcal{V}}\) being a \(p\)\=/dimensional subspace of
+\(\mathcal{V}\).  Now, \enquote{\(p\) dimensions} of \(\supp(\vec{e})\) come
+from \(\tilde{\mathcal{V}}\), while the remaining \enquote{\(w - p\)
+  dimensions} come from \(\mathcal{V}^{\perp}\).  Again, there are in total
+\(\gbinom{m}{w}_q\) possibilities for \(\supp(\vec{e})\).  This means that the
+probability of a successful iteration is now
+\[
+  \gbinom{\zeta}{p}_q \gbinom{m - \zeta}{w - p}_q \gbinom{m}{w}_q^{-1}\text.
+\]
+
+Let \(\basis{\tilde{\vec{v}}_1, \ldots, \tilde{\vec{v}}_p}\) be a basis of
+\(\tilde{\mathcal{V}}\).  \Cref{eq:P-ISD-R-P-system} now becomes
+\begin{equation}\label{eq:LB-ISD-R-P-system}
+  \setlength{\arraycolsep}{0pt}
+  \newcolumntype{B}{>{{}}c<{{}}}
+  \left\{
+    \begin{array}{l B l}
+      \mat{P} (y_1 - {(\vec{x} \mat{G})}_1)
+      & = &
+            \sum_{j = 1}^p \lambda_{1, j} \tilde{\vec{v}}_j \\
+      \mat{P} (y_2 - {(\vec{x} \mat{G})}_2)
+      & = &
+            \sum_{j = 1}^p \lambda_{2, j} \tilde{\vec{v}}_j \\
+      & \vdots &                                          \\
+      \mat{P} (y_n - {(\vec{x} \mat{G})}_n)
+      & = &
+            \sum_{j = 1}^p \lambda_{n, j} \tilde{\vec{v}}_j\text.
+    \end{array}
+  \right.
+\end{equation}
+There are an additional \(n p\) unknowns now; thus, we require that
+\(\zeta = \ceil{m k / {n}} + p\).  \Cref{alg:LB-ISD-R-P} is an immediate
+consequence of \cref{eq:LB-ISD-R-P-system}.  \Cref{tab:LB-ISD-R-P-complexity}
+shows the complexity for different values of \(p\) for the parameters proposed
+for the Loidreau cryptosystem.
+
+\begin{algorithm}
+  \caption{\LBISD{} using projections in the rank metric}\label{alg:LB-ISD-R-P}
+  \DontPrintSemicolon{}%
+  \KwIn{Generator matrix \(\mat{G} \in \FF_{q^m}^{k \times n}\), received word
+    \(\vec{y} \in \FF_q^n\), target weight \(w \in \NN\), and algorithm
+    parameter \(p \in \NN\) with \(0 \le p \le w\)}%
+  \KwOut{Error \(\vec{e} \in \FF_q^n\) with \(\norm{\vec{e}} \le w\) and
+    \(\vec{y} - \vec{e} \in \mathcal{C}\)}%
+  \Begin{%
+    \(\zeta \gets \ceil*{\frac{m k}{n}} + p\)\;%
+    \(\vec{x} \coloneqq \begin{bmatrix} x_1 & \cdots & x_k \end{bmatrix}\) with
+    \(x_j \in \FF_q^m\)\;%
+    \(x_j \coloneqq \begin{bmatrix} x_{j, 1} & \cdots & x_{j, m} \end{bmatrix}^{\trans}\)
+    with \(x_{j, l} \in \FF_q\)\;%
+    \Repeat{sufficiently many iterations have been performed}{%
+      \(\mathcal{V} \gets\) random \(\zeta\)\=/dimensional subspace of
+      \(\FF_q^m\)\;%
+      \(\mat{P} \gets\) \(\zeta \times m\) matrix that projects from
+      \(\FF_q^m\) to \(\mathcal{V}\)\;%
+      \ForEach{\(\tilde{\mathcal{V}} \le \mathcal{V}\) with
+        \(\dim \tilde{\mathcal{V}} = p\)}{%
+        \(\basis{\tilde{\vec{v}}_1, \ldots, \tilde{\vec{v}}_p} \gets\) basis of
+        \(\tilde{\mathcal{V}}\)\;%
+        solve for \(\vec{x}\) and \(\{\lambda_{i, j}\}\) in
+        \(\{\mat{P} (y_i - {(\vec{x} \mat{G})}_i) =
+        \sum_{j = 1}^p \lambda_{i, j} \tilde{\vec{v}}_j : \forall 1 \le i \le n\}\)\;%
+        \ForAll{solutions for \(\vec{x}\) and \(\lambda_{i, j}\)}{%
+          \(\vec{e} \gets \vec{y} - \vec{x} \mat{G}\) with the appropriate
+          values for \(\vec{x}\) substituted in\;%
+          \lIf{\(\norm{\vec{e}}_q \le w\)}{\Return{\(\vec{e}\)}%
+          }%
+        }%
+      }%
+    }%
+  }
+\end{algorithm}
+
+\paragraph{Asymptotic analysis of \cref{alg:LB-ISD-R-P}} Recall that the
+Gaussian binomial coefficient satisfies
+\[
+  \gbinom{n}{k}_q \in \Theta(q^{k (n - k)})\text.
+\]
+This means that\--- ignoring the cost of Gaussian elimination\--- the
+complexity of \cref{alg:LB-ISD-R-P} is
+\[
+  \Theta(q^{w (\ceil{m k / {n}} + p) + p m - 2p (\ceil{m k / {n}} + 2p)})\text.
+\]
+The optimal value for \(p\) depends on the instance's parameters, but the
+optimal value can easily be computed as the value which minimizes the
+complexity.  We observed that is beneficial to either leave \(p = 0\) or push
+it as close to \(w\) as possible (usually exactly to \(w\)).  When \(p = 0\),
+the above expression becomes
+\[
+  \Theta(q^{w \ceil{m k / {n}}})\text,
+\]
+which can be seen as a dual to the state\-/of\-/the\-/art algorithms by
+\textcites{GRS13}{HT15}.  We see that \LBISD{} has the same asymptotic
+complexity as the algorithms in~\cites{GRS13}{HT15} in the case when \(p = 0\)
+is the optimal value, and considerably better complexity otherwise.
+
+\begin{table}
+  \centering
+  \captionabove{Complexity of \LBISD{} for the parameters proposed
+    in~\cite{Loi17}}\label{tab:LB-ISD-R-P-complexity}
+  \begin{tabular}{%
+    S[table-format=3]%
+    S[table-format=3]%
+    S[table-format=2]%
+    S[table-format=1]%
+    S[table-format=3]%
+    S[table-format=1]%
+    S[table-format=3]%
+    }
+    \toprule
+    {\(m\)} & {\(n\)} & {\(k\)} & {\(\lambda\)}
+    & {Compl.\ of~\cite{GRS13} (\si{bit})}
+    & {Opt.\ \(p\)} & {Compl.\ of \cref{alg:LB-ISD-R-P} (\si{bit})} \\
+    \midrule
+    50 & 50 & 32 & 3 & 96 & 3 & 36 \\
+    80 & 80 & 11 & 3 & 121 & 0 & 121 \\
+    96 & 64 & 40 & 3 & 240 & 4 & 112 \\
+    128 & 90 & 24 & 3 & 352 & 0 & 352 \\
+    128 & 120 & 80 & 5 & 320 & 4 & 128 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\chapter{Conclusion and Future Perspective}
+
+In this thesis, we surveyed the GPT cryptosystem and proposed new techniques
+for decoding in the rank metric.  These techniques are based on the concept of
+\emph{information set decoding}, which has been studied extensively in the
+Hamming metric.  For certain parameter sets, the newly\-/proposed techniques
+were found to improve upon the current state\-/of\-/the\-/art.
+
+In \cref{chap:GPT}, we defined the GPT cryptosystem in its original form and
+the subsequent reparation by \textcite{GO01}.  We simplified and incorporated
+additional ideas into the proof of \textcite{Ksh07} which shows that we can
+always assume a certain form of a GPT public key suitable for cryptanalysis.
+
+The main contributions are the algorithms in \cref{chap:ISD}.  We formulated
+variants of plain information set decoding and Lee\--Brickell's algorithm using
+a notion of error support suitable for the rank metric.  Prior to that, we
+surveyed the connection between the MinRank problem in linear algebra and
+decoding in the rank metric.  Additionally, the direct adaptation of
+information set decoding from the Hamming metric to the rank metric was
+experimentally found to be inefficient.  However, it served as the basis for
+the algorithms in \cref{sec:ISD-R-P}, which are tailored specifically for the
+rank metric and serve as a dual to the algorithm by \textcite{GRS13}.
+
+We leave it as future work to
+\begin{itemize}
+\item Adapt improvements in the spirit of \textcite{Ste89, Dum96} to the notion
+  of error support in the rank metric; and
+\item Provide working implementations of algorithms in \textsc{SageMath}.
+\end{itemize}
+
+\appendix\chapter{Source code}
+
+The code shown in \cref{lst:SMRD-simulation} estimates the empirical
+distribution of \(p_{\LB}\) defined in \cref{def:submatrix-rank-distribution}.
+
+\begin{listing}[h]
+\begin{minted}[escapeinside=||, mathescape]{python}
+from collections import Counter
+
+def submatrix_rank_simulation(m, n, k, KK, w,
+                              num_outer=10^4, num_inner=10^4):
+    #  Simulate the distribution of the rank of a random submatrix.
+
+    #  `num_outer` matrices from $\M(\KK, m, n)$ of rank $w$ are sampled.
+    #  For each rank-$w$ matrix, `num_outer` $m \times k$ random submatrices
+    #  are taken and have their ranks tallied.
+    if k > n:
+        raise ValueError("`k` must not be greater than `n`")
+
+    tally = Counter()
+    col_indices = tuple(range(n))
+
+    for i in range(num_outer):
+        E = random_matrix(KK, m, n,
+                          algorithm='echelonizable', rank=w)
+        for _ in range(num_inner):
+            E_sub = E[:, sample(col_indices, k)]
+            tally[E_sub.rank()] += 1
+
+    return tally
+\end{minted}
+\captionbelow{Estimating \(p_{\LB}(p; 32, 32, 16, \FF_2, 8)\) in
+  \textsc{SageMath}}\label{lst:SMRD-simulation}
+\end{listing}
+
+\backmatter\printbibliography{}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-command-extra-options: "-shell-escape"
+%%% TeX-engine: luatex
+%%% TeX-master: t
+%%% End:
