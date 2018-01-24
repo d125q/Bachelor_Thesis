@@ -1,5 +1,4 @@
-\documentclass[version=last, paper=A4, parskip=half, oneside,%
-toc=bibliography, toc=listof, listof=leveldown]{scrbook}
+\documentclass[version=last, paper=A4, parskip=half, oneside]{scrbook}
 
 % Fonts
 \usepackage{fontspec}
@@ -16,9 +15,9 @@ toc=bibliography, toc=listof, listof=leveldown]{scrbook}
 % Mathematics
 \usepackage{mathtools}
 \usepackage{amsthm}
-\usepackage[algochapter, ruled, longend]{algorithm2e}
-\usepackage{prftree}
 \usepackage{unicode-math}
+\usepackage[algochapter, ruled, longend]{algorithm2e}
+\RedeclareSectionCommand{chapter}
 
 % Source code
 \usepackage{fancyvrb}
@@ -68,6 +67,10 @@ loadfiles, giveninits, pagetracker]{biblatex}
 %
 % Package setup
 %
+
+\KOMAoptions{%
+  toc=bibliography, toc=listof, listof=leveldown, listof=nochaptergap%
+}
 
 \defaultfontfeatures{Ligatures=TeX}
 
@@ -212,7 +215,7 @@ loadfiles, giveninits, pagetracker]{biblatex}
 \DeclarePairedDelimiter{\card}{\lvert}{\rvert}
 
 % Gaussian binomial coefficient
-\DeclareRobustCommand{\gbinom}{\genfrac[]{0pt}{}}
+\DeclareRobustCommand{\qbinom}{\genfrac[]{0pt}{}}
 
 % Miscellaneous notation
 \newcommand*{\sys}{\ensuremath{\mathsf{sys}}}
@@ -245,7 +248,7 @@ loadfiles, giveninits, pagetracker]{biblatex}
 
 \begin{document}
 
-\addtotoclist[float]{loa}
+\addtotoclist[algorithm2e]{loa}
 \setuptoc{loa}{%
   chapteratlist, totoc, leveldown%
 }
@@ -253,15 +256,13 @@ loadfiles, giveninits, pagetracker]{biblatex}
 \newcommand*{\listofloaname}{\listalgorithmcfname}
 \renewcommand{\listofalgorithms}{\listoftoc{loa}}
 
-\frontmatter{}
-
-\maketitle{}
-
-\tableofcontents{}
-\listoffigures{}
-\listoftables{}
-\listofalgorithms{}
-\listoflistings{}
+\frontmatter%
+\maketitle%
+\tableofcontents%
+\listoffigures%
+\listoftables%
+\listofalgorithms%
+\listoflistings%
 
 \addchap{Abstract}
 
@@ -291,8 +292,7 @@ a family of algorithms that has been the most successful way to attack
 McEliece\-/like cryptosystems, but has not been explored in the context of the
 rank metric.
 
-\mainmatter{}
-
+\mainmatter%
 \chapter{Introduction}\label{chap:introduction}
 
 In its advent, cryptography was used with the intention of making the
@@ -688,11 +688,12 @@ generator matrix of \(\Gop\).
 
 \paragraph{Private key} Tuple \((\Gop, \mat{G}, \mat{P}, \mat{S})\).
 
-nformation needs to be embedded in a length\=/\(k\) word
-\(\vec{x} \in \FF_q^k\) in order to be suitable for the encryption algorithm.
-Then, \(\vec{x}\) can be encrypted with \cref{alg:mceliece-encryption}.  The
-legitimate owner of the private key can use \cref{alg:mceliece-decryption} to
-decode a ciphertext \(\vec{y}\).
+Information needs to be embedded in a length\=/\(k\) word
+\(\vec{x} \in \FF_q^k\) in order to be suitable for the encryption
+algorithm.  Then, \(\vec{x}\) can be encrypted with
+\cref{alg:mceliece-encryption}.  The legitimate owner of the private
+key can use \cref{alg:mceliece-decryption} to decode a ciphertext
+\(\vec{y}\).
 
 \begin{algorithm}
   \caption{McEliece encryption}\label{alg:mceliece-encryption}
@@ -1073,7 +1074,7 @@ code defined by the parity\-/check matrix \(\mat{H}\) consists of six steps:
   \(\vec{e} = \begin{bmatrix} E_1 & \cdots & E_w \end{bmatrix} \mat{Y}\).
 \end{steps}
 
-The complxity of \crefrange{stp:GC-decoding-1}{stp:GC-decoding-6} is
+The complexity of \crefrange{stp:GC-decoding-1}{stp:GC-decoding-6} is
 \(\mathcal{O}(d^3 + d n)\).
 
 \section{Description of the GPT Cryptosystem}
@@ -1533,7 +1534,7 @@ Overbeck's attack since it is no longer true that
   \mat{P}^{[i]} = \mat{P}\text.
 \]
 As a matter of fact, there is no known reason for the public key to have any
-particular structure.  Namely, even though the entires of \(\mat{P}\) are all in
+particular structure.  Namely, even though the entries of \(\mat{P}\) are all in
 some \(\lambda\)\=/dimensional subspace \(\mathcal{V}\), there is no reason for
 the entries of \(\mat{P}^{-1}\) to be in any subspace.  The proposed parameters
 can be found in \cref{tab:loidreau-parameters}.
@@ -1568,7 +1569,7 @@ Hamming metric, the best algorithms that we know of rely on information set
 decoding (ISD), originally proposed by \textcite{Eli78} and inspired by the work
 of \textcite{Pra62}.  In short, the idea behind ISD is to pick a sufficiently
 large set of error\-/free positions in a received word.  Then, the information
-sequence can be obtianed by linear algebra.
+sequence can be obtained by linear algebra.
 
 Since its introduction, ISD has been refined to the point of being able to
 decode random binary linear codes in the Hamming metric with complexity
@@ -2036,9 +2037,9 @@ probability was determined empirically by \num{6e8} simulations using
     S[table-format=1]%
     S[table-format=1.2e-1, round-integer-to-decimal, table-auto-round]%
     }
-    \toprule
+    \toprule%
     {\(p\)} & {\(p_{\LB}(p; 32, 32, 16, \FF_2, 8)\)} \\
-    \midrule
+    \midrule%
     0 & 0 \\
     1 & 0 \\
     2 & 0 \\
@@ -2048,14 +2049,14 @@ probability was determined empirically by \num{6e8} simulations using
     6 & 4.31678333333333e-4 \\
     7 & 0.0294282400000000 \\
     8 & 0.970135935000000 \\
-    \bottomrule
+    \bottomrule%
   \end{tabular}
 \end{table}
 
 Knowing that the number of subspaces of dimension \(p\) in a vector space of
 dimension \(m\) over \(\FF_q\) is given by
 \[
-  \gbinom{m}{p}_q =
+  \qbinom{m}{p}_q =
   \begin{cases}
     \frac{%
       (1 - q^m)(1 - q^{m - 1}) \cdots (1 - q^{m - r + 1})%
@@ -2070,7 +2071,7 @@ we see from \cref{thm:las-vegas-running-time} that the complexity of
 \begin{equation}\label{eq:LB-ISD-R-SC-complexity}
   \mathcal{O}\left(
     {p_{\LB}(p; m, n, k, \FF_q, w)}^{-1}
-    \gbinom{m}{p}_q
+    \qbinom{m}{p}_q
     k p {(\ceil{k p / {m}} m)}^2 q^{\ceil{k p / {m}} p}
   \right)\text.
 \end{equation}
@@ -2089,7 +2090,7 @@ algorithm, we need \cref{thm:number-of-surjective-linear-transformations} and
   The number of surjective linear transformations from an \(n\)\=/dimensional
   vector space \(V_n(q)\) to an \(m\)\=/dimensional vector space over \(\FF_q\) is
   \[
-    \sum_{k = 0}^m {(-1)}^{m - k} \gbinom{m}{k}_q q^{n k + \binom{m - k}{2}}\text.
+    \sum_{k = 0}^m {(-1)}^{m - k} \qbinom{m}{k}_q q^{n k + \binom{m - k}{2}}\text.
   \]
   \begin{proof}
     See~\cite[p.~338]{LW01}.
@@ -2100,20 +2101,21 @@ algorithm, we need \cref{thm:number-of-surjective-linear-transformations} and
   The number of \(k \times n\) matrices over \(\FF_q\) that have rank \(p\) is
   \[
     N_q(k, n, p) \coloneqq
-    \gbinom{n}{p}_q \sum_{l = 0}^{p}
-    {(-1)}^{r - l} \gbinom{r}{l}_q q^{k l + \binom{r - l}{2}}\text.
+    \qbinom{n}{p}_q \sum_{l = 0}^{p}
+    {(-1)}^{r - l} \qbinom{r}{l}_q q^{k l + \binom{r - l}{2}}\text.
   \]
 \end{corollary}
 
 \Cref{cor:number-of-matrices-of-given-rank} implies that an algorithm which
-iterates through all rank\=/\(p\) matrices would have a complexity of
-\[
+iterates through all rank\=/\(p\) matrices would have a complexity given by
+\cref{eq:LB-ISD-R-SC-iterative-complexity}.  However, we found out numerically
+that this quantity is always larger than the one given by
+\cref{eq:LB-ISD-R-SC-complexity}.
+\begin{equation}\label{eq:LB-ISD-R-SC-iterative-complexity}
   \mathcal{O}\left(
     {p_{\LB}(p; m, n, k, \FF_q, w)}^{-1} N_q(m, k, p)
   \right)\text.
-\]
-However, we found out numerically that this quantity is always larger than that
-in \cref{eq:LB-ISD-R-SC-complexity}.
+\end{equation}
 
 \subsubsection{Thoughts on the Ideas by \texorpdfstring{\textcite{Ste89,
       Dum96}}{Stern and Dumer}}
@@ -2258,17 +2260,17 @@ side.  We can translate this idea to an algorithm in a straightforward manner,
 
 Analyzing the complexity of \cref{alg:P-ISD-R-P} requires us to define what
 \enquote{sufficiently many iterations} on \autoref{alg:number-of-iterations}
-means.  We know that there are \(\gbinom{m}{w}_q\) possibilities for
+means.  We know that there are \(\qbinom{m}{w}_q\) possibilities for
 \(\supp(\vec{e})\) in the general case.  On the other hand, there are
-\(\gbinom{m - \zeta}{w}_q\) subspaces satisfying \cref{cond:orthogonality}.
+\(\qbinom{m - \zeta}{w}_q\) subspaces satisfying \cref{cond:orthogonality}.
 (Recall that \cref{cond:determinedness} is satisfied by the choice of
 \(\zeta\).)  This implies that the probability of a successful iteration is
 \[
-  \gbinom{m - \zeta}{w}_q \gbinom{m}{w}_q^{-1}\text;
+  \qbinom{m - \zeta}{w}_q \qbinom{m}{w}_q^{-1}\text;
 \]
 which, in turn, means that on average
 \[
-  \gbinom{m - \zeta}{w}_q^{-1} \gbinom{m}{w}_q
+  \qbinom{m - \zeta}{w}_q^{-1} \qbinom{m}{w}_q
 \]
 iterations have to be performed (\cref{thm:las-vegas-running-time}).  Solving
 for \(\vec{x}\) can be done in time polynomial in the inputs to the algorithm,
@@ -2291,11 +2293,11 @@ probability of a successful iteration.  Namely, let
 \(\mathcal{V}\).  Now, \enquote{\(p\) dimensions} of \(\supp(\vec{e})\) come
 from \(\tilde{\mathcal{V}}\), while the remaining \enquote{\(w - p\)
   dimensions} come from \(\mathcal{V}^{\perp}\).  Again, there are in total
-\(\gbinom{m}{w}_q\) possibilities for \(\supp(\vec{e})\).  This means that the
+\(\qbinom{m}{w}_q\) possibilities for \(\supp(\vec{e})\).  This means that the
 probability of a successful iteration is now
-\[
-  \gbinom{\zeta}{p}_q \gbinom{m - \zeta}{w - p}_q \gbinom{m}{w}_q^{-1}\text.
-\]
+\begin{equation}\label{eq:LB-ISD-R-P-probability}
+  \qbinom{\zeta}{p}_q \qbinom{m - \zeta}{w - p}_q \qbinom{m}{w}_q^{-1}\text.
+\end{equation}
 
 Let \(\basis{\tilde{\vec{v}}_1, \ldots, \tilde{\vec{v}}_p}\) be a basis of
 \(\tilde{\mathcal{V}}\).  \Cref{eq:P-ISD-R-P-system} now becomes
@@ -2319,9 +2321,7 @@ Let \(\basis{\tilde{\vec{v}}_1, \ldots, \tilde{\vec{v}}_p}\) be a basis of
 \end{equation}
 There are an additional \(n p\) unknowns now; thus, we require that
 \(\zeta = \ceil{m k / {n}} + p\).  \Cref{alg:LB-ISD-R-P} is an immediate
-consequence of \cref{eq:LB-ISD-R-P-system}.  \Cref{tab:LB-ISD-R-P-complexity}
-shows the complexity for different values of \(p\) for the parameters proposed
-for the Loidreau cryptosystem.
+consequence of \cref{eq:LB-ISD-R-P-system}.
 
 \begin{algorithm}
   \caption{\LBISD{} using projections in the rank metric}\label{alg:LB-ISD-R-P}
@@ -2360,28 +2360,36 @@ for the Loidreau cryptosystem.
   }
 \end{algorithm}
 
-\paragraph{Asymptotic analysis of \cref{alg:LB-ISD-R-P}} Recall that the
-Gaussian binomial coefficient satisfies
+\paragraph{Asymptotic analysis of \cref{alg:LB-ISD-R-P}} The probability of
+success given by \cref{eq:LB-ISD-R-P-probability}, along with the cost of
+iterating through all \(p\)\=/dimensional subspaces of a \(\zeta\)\=/dimensional
+vector space implies\--- ignoring the cost of Gaussian elimination\--- a
+complexity of
 \[
-  \gbinom{n}{k}_q \in \Theta(q^{k (n - k)})\text.
+  \qbinom{m - \zeta}{w - p}_q^{-1} \qbinom{m}{w}_q\text.
 \]
-This means that\--- ignoring the cost of Gaussian elimination\--- the
-complexity of \cref{alg:LB-ISD-R-P} is
+
+Recall that the Gaussian binomial coefficient satisfies
 \[
-  \Theta(q^{w (\ceil{m k / {n}} + p) + p m - 2p (\ceil{m k / {n}} + 2p)})\text.
+  \qbinom{n}{k}_q \in \Theta(q^{k (n - k)})\text.
 \]
-The optimal value for \(p\) depends on the instance's parameters, but the
-optimal value can easily be computed as the value which minimizes the
-complexity.  We observed that is beneficial to either leave \(p = 0\) or push
-it as close to \(w\) as possible (usually exactly to \(w\)).  When \(p = 0\),
+This means that, asymptotically, the complexity is
+\[
+  \Theta(q^{\zeta w + p (p + m - \zeta)})\text.
+\]
+Since \(m > \zeta\), the above expression is minimized when \(p = 0\).  Thus, it
+is always optimal to take \(p = 0\), i.e., the case of \PISD\@.  In that case,
 the above expression becomes
 \[
   \Theta(q^{w \ceil{m k / {n}}})\text,
 \]
-which can be seen as a dual to the state\-/of\-/the\-/art algorithms by
-\textcites{GRS13}{HT15}.  We see that \LBISD{} has the same asymptotic
-complexity as the algorithms in~\cites{GRS13}{HT15} in the case when \(p = 0\)
-is the optimal value, and considerably better complexity otherwise.
+which can be seen as dual to the state\-/of\-/the\-/art algorithms by
+\textcites{GRS13}{HT15}.  We see from \cref{tab:LB-ISD-R-P-complexity}
+that \PISD{} has the same asymptotic complexity as the algorithms
+in~\cites{GRS13}{HT15}.  Intuitively, this is because
+\[
+  \qbinom{n}{k}_q = \qbinom{n}{n - k}_q\text.
+\]
 
 \begin{table}
   \centering
@@ -2396,27 +2404,28 @@ is the optimal value, and considerably better complexity otherwise.
     S[table-format=1]%
     S[table-format=3]%
     }
-    \toprule
+    \toprule%
     {\(m\)} & {\(n\)} & {\(k\)} & {\(\lambda\)}
     & {Compl.\ of~\cite{GRS13} (\si{bit})}
-    & {Opt.\ \(p\)} & {Compl.\ of \cref{alg:LB-ISD-R-P} (\si{bit})} \\
-    \midrule
-    50 & 50 & 32 & 3 & 96 & 3 & 36 \\
+    & {Opt.\ \(p\)} & {Compl.\ of \cref{alg:P-ISD-R-P} (\si{bit})} \\
+    \midrule%
+    50 & 50 & 32 & 3 & 96 & 0 & 96 \\
     80 & 80 & 11 & 3 & 121 & 0 & 121 \\
-    96 & 64 & 40 & 3 & 240 & 4 & 112 \\
+    96 & 64 & 40 & 3 & 240 & 0 & 240 \\
     128 & 90 & 24 & 3 & 352 & 0 & 352 \\
-    128 & 120 & 80 & 5 & 320 & 4 & 128 \\
-    \bottomrule
+    128 & 120 & 80 & 5 & 320 & 0 & 320 \\
+    \bottomrule%
   \end{tabular}
 \end{table}
 
 \chapter{Conclusion and Future Perspective}
 
-In this thesis, we surveyed the GPT cryptosystem and proposed new techniques
-for decoding in the rank metric.  These techniques are based on the concept of
+In this thesis, we surveyed the GPT cryptosystem and proposed new techniques for
+decoding in the rank metric.  These techniques are based on the concept of
 \emph{information set decoding}, which has been studied extensively in the
-Hamming metric.  For certain parameter sets, the newly\-/proposed techniques
-were found to improve upon the current state\-/of\-/the\-/art.
+Hamming metric.  We show that these techniques can be seen as dual to the
+state\-/of\-/the\-/art algorithms (\cites{GRS13}{HT15}) and achieve the same
+complexity.
 
 In \cref{chap:GPT}, we defined the GPT cryptosystem in its original form and
 the subsequent reparation by \textcite{GO01}.  We simplified and incorporated
@@ -2431,22 +2440,24 @@ decoding in the rank metric.  Additionally, the direct adaptation of
 information set decoding from the Hamming metric to the rank metric was
 experimentally found to be inefficient.  However, it served as the basis for
 the algorithms in \cref{sec:ISD-R-P}, which are tailored specifically for the
-rank metric and serve as a dual to the algorithm by \textcite{GRS13}.
+rank metric.
 
 We leave it as future work to
 \begin{itemize}
 \item Adapt improvements in the spirit of \textcite{Ste89, Dum96} to the notion
   of error support in the rank metric; and
-\item Provide working implementations of algorithms in \textsc{SageMath}.
+\item Provide working implementations of the algorithms in
+  \textsc{SageMath}~\cite{SageMath}.
 \end{itemize}
 
 \appendix\chapter{Source code}
 
-The code shown in \cref{lst:SMRD-simulation} estimates the empirical
-distribution of \(p_{\LB}\) defined in \cref{def:submatrix-rank-distribution}.
+The \textsc{SageMath}~\cite{SageMath} code shown in \cref{lst:SMRD-simulation}
+estimates the empirical distribution of \(p_{\LB}\) defined in
+\cref{def:submatrix-rank-distribution}.
 
 \begin{listing}[h]
-\begin{minted}[escapeinside=||, mathescape]{python}
+\begin{minted}[mathescape]{python}
 from collections import Counter
 
 def submatrix_rank_simulation(m, n, k, KK, w,
@@ -2471,11 +2482,12 @@ def submatrix_rank_simulation(m, n, k, KK, w,
 
     return tally
 \end{minted}
-\captionbelow{Estimating \(p_{\LB}(p; 32, 32, 16, \FF_2, 8)\) in
-  \textsc{SageMath}}\label{lst:SMRD-simulation}
+\captionbelow{Estimating \(p_{\LB}(p; 32, 32, 16, \FF_2, 8)\)
+  empirically}\label{lst:SMRD-simulation}
 \end{listing}
 
-\backmatter\printbibliography{}
+\backmatter%
+\printbibliography{}
 
 \end{document}
 
